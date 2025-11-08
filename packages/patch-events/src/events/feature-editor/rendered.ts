@@ -6,7 +6,7 @@ type OnArgs = Parameters<WmeSDK['Events']['on']>[0];
 type ExtractEventPayload<T> = T extends ((payload: infer U) => Promise<void> | void) ? U : never;
 type AllEventPayloads = ExtractEventPayload<OnArgs['eventHandler']>;
 
-type FeatureEditorOpenedPayload = Extract<AllEventPayloads, { featureType: any }>;
+type FeatureEditorOpenedPayload = Extract<AllEventPayloads, { featureType: unknown }>;
 
 export const featureEditorRenderedEventDefinition = createEventDefinition(
   'wme-feature-editor-rendered',
@@ -25,7 +25,7 @@ export const featureEditorRenderedEventDefinition = createEventDefinition(
     });
 
     return () => {
-      // Unsubscribe from SDK event and disconnect the observer
+      // Unsubscribe from SDK event
       wmeSdk.Events.off({
         eventName: 'wme-feature-editor-opened',
         eventHandler,
