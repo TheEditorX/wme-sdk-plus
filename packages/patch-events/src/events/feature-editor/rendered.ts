@@ -11,8 +11,6 @@ type FeatureEditorOpenedPayload = Extract<AllEventPayloads, { featureType: unkno
 export const featureEditorRenderedEventDefinition = createEventDefinition(
   'wme-feature-editor-rendered',
   ({ wmeSdk, trigger }) => {
-    console.warn('[WME SDK+]: Event "wme-feature-editor-rendered" is deprecated. Please use native "wme-feature-editor-opened" instead.');
-
     const eventHandler = ({ featureType }: FeatureEditorOpenedPayload) => {
       trigger({
         featureType,
@@ -30,6 +28,13 @@ export const featureEditorRenderedEventDefinition = createEventDefinition(
         eventName: 'wme-feature-editor-opened',
         eventHandler,
       });
-    }
+    };
   },
-)
+  {
+    onSubscribed() {
+      console.warn(
+        '[WME SDK+]: Event "wme-feature-editor-rendered" is deprecated. Please use native "wme-feature-editor-opened" instead.'
+      );
+    },
+  }
+);
