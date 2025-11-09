@@ -66,8 +66,8 @@ export const sidebarTabRenderedEvent = createEventDefinition(
             });
             break;
           case 'attributes': {
-            if (mutation.attributeName !== 'id') return;
-            if (!isSidebarTabPane(mutation.target)) return;
+            if (mutation.attributeName !== 'id') break;
+            if (!isSidebarTabPane(mutation.target)) break;
             triggerForSidebarTab(mutation.target);
             break;
           }
