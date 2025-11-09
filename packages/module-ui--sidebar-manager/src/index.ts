@@ -1,28 +1,28 @@
 import { DefinePropertyRule, SdkPatcherRule } from '@wme-enhanced-sdk/sdk-patcher';
-import { SidebarManager } from './lib/sidebar-manager.js';
+import { UrlBasedSidebarTabSwitchController, ISidebarTabSwitchController } from './lib/sidebar-manager.js';
 
-let sidebarManager: SidebarManager;
+let sidebarTabController: ISidebarTabSwitchController;
 
-function getSidebarManager(): SidebarManager {
-  if (!sidebarManager) {
-    sidebarManager = new SidebarManager();
+function getSidebarTabController(): ISidebarTabSwitchController {
+  if (!sidebarTabController) {
+    sidebarTabController = new UrlBasedSidebarTabSwitchController();
   }
-  return sidebarManager;
+  return sidebarTabController;
 }
 
 export default [
   new DefinePropertyRule(
-    'UI.Sidebar.preventTabSwitching',
-    () => getSidebarManager().preventTabSwitching(),
+    'Sidebar.TabControl.preventTabSwitching',
+    () => getSidebarTabController().preventTabSwitching(),
   ),
   new DefinePropertyRule(
-    'UI.Sidebar.allowTabSwitching',
-    () => getSidebarManager().allowTabSwitching(),
+    'Sidebar.TabControl.allowTabSwitching',
+    () => getSidebarTabController().allowTabSwitching(),
   ),
   new DefinePropertyRule(
-    'UI.Sidebar.isTabSwitchingPrevented',
-    () => getSidebarManager().isTabSwitchingPrevented(),
+    'Sidebar.TabControl.isTabSwitchingPrevented',
+    () => getSidebarTabController().isTabSwitchingPrevented(),
   ),
 ] as SdkPatcherRule[];
 
-export { SidebarManager } from './lib/sidebar-manager.js';
+export { UrlBasedSidebarTabSwitchController, ISidebarTabSwitchController } from './lib/sidebar-manager.js';

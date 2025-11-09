@@ -15,26 +15,57 @@ function isSamePath(url1: URL, url2: URL): boolean {
 }
 
 /**
- * Manages sidebar tab switching behavior in the Waze Map Editor
+ * Interface for managing sidebar tab switching behavior
  * 
- * This class provides functionality to temporarily prevent the WME sidebar from
- * switching tabs. This is useful when implementing custom selection modes or other
- * features that need to maintain the current sidebar state.
+ * Implementations of this interface provide mechanisms to temporarily prevent
+ * the WME sidebar from switching tabs.
+ */
+export interface ISidebarTabSwitchController {
+  /**
+   * Prevents sidebar tab switching
+   */
+  preventTabSwitching(): void;
+
+  /**
+   * Allows sidebar tab switching
+   */
+  allowTabSwitching(): void;
+
+  /**
+   * Returns whether tab switching is currently prevented
+   */
+  isTabSwitchingPrevented(): boolean;
+
+  /**
+   * Cleans up resources and restores original behavior
+   */
+  destroy(): void;
+}
+
+/**
+ * URL-based implementation of sidebar tab switching control
+ * 
+ * This implementation prevents tab switching by intercepting history.pushState
+ * calls that change the 'tab' URL query parameter. This works with WME's React
+ * Router-based sidebar implementation.
  * 
  * @example
  * ```typescript
- * const manager = new SidebarManager();
+ * const controller = new UrlBasedSidebarTabSwitchController();
  * 
  * // Prevent tab switching
- * manager.preventTabSwitching();
+ * controller.preventTabSwitching();
  * 
  * // ... perform operations that would normally cause tab switches ...
  * 
  * // Allow tab switching again
- * manager.allowTabSwitching();
+ * controller.allowTabSwitching();
+ * 
+ * // Clean up
+ * controller.destroy();
  * ```
  */
-export class SidebarManager {
+export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchController {
   private readonly _historyPushStateInterceptor: MethodInterceptor<History, 'pushState'>;
 
   constructor() {

@@ -1,13 +1,13 @@
-import { SidebarManager } from './sidebar-manager.js';
+import { UrlBasedSidebarTabSwitchController } from './sidebar-manager.js';
 
-describe('SidebarManager', () => {
-  let manager: SidebarManager;
+describe('UrlBasedSidebarTabSwitchController', () => {
+  let manager: UrlBasedSidebarTabSwitchController;
   let originalPushState: typeof window.history.pushState;
 
   beforeEach(() => {
     // Save the original pushState
     originalPushState = window.history.pushState;
-    manager = new SidebarManager();
+    manager = new UrlBasedSidebarTabSwitchController();
   });
 
   afterEach(() => {
@@ -76,7 +76,7 @@ describe('SidebarManager', () => {
       
       // After destroy, the manager should no longer be active
       // We verify this by checking that we can create a new manager
-      const newManager = new SidebarManager();
+      const newManager = new UrlBasedSidebarTabSwitchController();
       expect(newManager.isTabSwitchingPrevented()).toBe(false);
       newManager.destroy();
     });

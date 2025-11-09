@@ -10,59 +10,74 @@ When implementing custom selection modes or other features that need to maintain
 
 The module intercepts `window.history.pushState` calls that only change the `tab` query parameter in the URL. This prevents the sidebar from switching tabs while still allowing other navigation to work normally.
 
+## Architecture
+
+The module follows a clean architecture with an interface-based design:
+
+- **`ISidebarTabSwitchController`**: Interface defining the contract for sidebar tab switching control
+- **`UrlBasedSidebarTabSwitchController`**: Implementation that intercepts URL-based tab navigation via `history.pushState`
+
+This design allows for future implementations using different mechanisms if needed.
+
 ## Usage
 
 ### Via SDK
 
 ```typescript
 // Prevent tab switching
-sdk.UI.Sidebar.preventTabSwitching();
+sdk.Sidebar.TabControl.preventTabSwitching();
 
 // ... perform operations that would normally cause tab switches ...
 
 // Allow tab switching again
-sdk.UI.Sidebar.allowTabSwitching();
+sdk.Sidebar.TabControl.allowTabSwitching();
 
 // Check if tab switching is currently prevented
-const isPrevented = sdk.UI.Sidebar.isTabSwitchingPrevented();
+const isPrevented = sdk.Sidebar.TabControl.isTabSwitchingPrevented();
 ```
 
 ### Direct Usage
 
 ```typescript
-import { SidebarManager } from '@wme-enhanced-sdk/module-ui--sidebar-manager';
+import { UrlBasedSidebarTabSwitchController } from '@wme-enhanced-sdk/module-ui--sidebar-manager';
 
-const manager = new SidebarManager();
+const controller = new UrlBasedSidebarTabSwitchController();
 
 // Prevent tab switching
-manager.preventTabSwitching();
+controller.preventTabSwitching();
 
 // ... perform operations ...
 
 // Allow tab switching again
-manager.allowTabSwitching();
+controller.allowTabSwitching();
 
 // Clean up when done
-manager.destroy();
+controller.destroy();
 ```
 
 ## API Reference
 
-### `preventTabSwitching(): void`
-Prevents sidebar tab switching by intercepting history.pushState calls that only change the 'tab' query parameter.
+### `ISidebarTabSwitchController` Interface
 
-### `allowTabSwitching(): void`
-Allows sidebar tab switching by disabling the history.pushState interception.
+#### `preventTabSwitching(): void`
+Prevents sidebar tab switching.
 
-### `isTabSwitchingPrevented(): boolean`
+#### `allowTabSwitching(): void`
+Allows sidebar tab switching.
+
+#### `isTabSwitchingPrevented(): boolean`
 Returns whether tab switching is currently prevented.
 
-### `destroy(): void`
-Cleans up the interceptor and restores original behavior. Should be called when the manager is no longer needed.
+#### `destroy(): void`
+Cleans up resources and restores original behavior.
+
+### `UrlBasedSidebarTabSwitchController` Class
+
+Implementation of `ISidebarTabSwitchController` that prevents tab switching by intercepting `history.pushState` calls that only change the 'tab' query parameter.
 
 ## Implementation Details
 
-The module uses the `MethodInterceptor` from `@wme-enhanced-sdk/method-interceptor` to intercept `window.history.pushState` calls. It only blocks calls that:
+The URL-based controller uses the `MethodInterceptor` from `@wme-enhanced-sdk/method-interceptor` to intercept `window.history.pushState` calls. It only blocks calls that:
 1. Have the same origin as the current page
 2. Have the same pathname as the current page
 3. Only differ in the `tab` query parameter

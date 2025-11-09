@@ -44,6 +44,9 @@
     },
     {
       "path": "./packages/module-ui--sidebar-manager"
+    },
+    {
+      "path": "./packages/module-ui--selection-mode"
     }
   ]
 }

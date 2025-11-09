@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../sdk-patcher"
+    },
+    {
+      "path": "../method-interceptor"
+    },
+    {
+      "path": "../module-ui--sidebar-manager"
+    },
+    {
+      "path": "../wme-utils"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}
