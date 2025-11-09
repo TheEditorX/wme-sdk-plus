@@ -1,5 +1,8 @@
 import { SdkPatcherRule } from '@wme-enhanced-sdk/sdk-patcher';
-import { featureEditorRenderedEventDefinition } from './events/index.js';
+import {
+  featureEditorRenderedEventDefinition,
+  sidebarTabRenderedEvent,
+} from './events/index.js';
 import { EventDefinition } from './interfaces/event-definition.js';
 import { EventEffectDestructor } from './interfaces/event-effect.js';
 import { MethodInterceptor } from '@wme-enhanced-sdk/method-interceptor';
@@ -7,6 +10,7 @@ import { MethodInterceptor } from '@wme-enhanced-sdk/method-interceptor';
 const EVENT_CLEANUPS_SYMBOL = Symbol('EVENT CLEANUPS');
 const EVENTS = [
   featureEditorRenderedEventDefinition,
+  sidebarTabRenderedEvent,
 ];
 
 function getEventByName(eventName: string): EventDefinition | null {
