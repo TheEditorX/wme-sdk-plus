@@ -4,16 +4,19 @@
   "include": [],
   "references": [
     {
-      "path": "../sdk-patcher"
+      "path": "../wme-utils"
     },
     {
-      "path": "../method-interceptor"
+      "path": "../utils"
+    },
+    {
+      "path": "../sdk-patcher"
     },
     {
       "path": "../module-ui--sidebar-manager"
     },
     {
-      "path": "../wme-utils"
+      "path": "../method-interceptor"
     },
     {
       "path": "./tsconfig.lib.json"

@@ -8,6 +8,8 @@ import {
   SelectionFilter,
   SelectableFeatureType,
 } from './types.js';
+import { SharedSelectionStateManager } from './shared-selection-state.js';
+import { OpenLayersSelectionController } from './openlayers-selection-controller.js';
 
 /**
  * Validates if a feature matches the selection filter
@@ -42,14 +44,8 @@ function matchesFilter(
  * Manages a special selection mode that allows script writers to guide users
  * in selecting specific map features with filtering and custom behavior.
  * 
- * @remarks
- * Note on multiple SDK+ instances: Each instance of SelectionModeManager tracks
- * its own state independently. If multiple scripts or imports use different SDK+
- * instances, their selection modes will not coordinate with each other. For
- * cross-script/cross-instance coordination, a shared storage mechanism on
- * `window` (or `unsafeWindow`) with a version-aware protocol would be needed.
- * This is currently not implemented to keep the API simple and avoid
- * version mismatch issues.
+ * Features cross-instance coordination using shared window storage, ensuring
+ * only one selection mode is active across all SDK+ instances at a time.
  */
 export class SelectionModeManager implements ISelectionModeManager {
   private _isActive = false;
@@ -57,9 +53,12 @@ export class SelectionModeManager implements ISelectionModeManager {
   private _currentSdk: WmeSDK | null = null;
   private _sidebarController: ISidebarTabSwitchController | null = null;
   private _selectionInterceptor: MethodInterceptor<any, 'setSelection'> | null = null;
+  private _sharedStateManager: SharedSelectionStateManager;
+  private _openLayersController: OpenLayersSelectionController | null = null;
 
   constructor(sidebarController?: ISidebarTabSwitchController) {
     this._sidebarController = sidebarController || null;
+    this._sharedStateManager = new SharedSelectionStateManager();
   }
 
   /**
@@ -68,6 +67,11 @@ export class SelectionModeManager implements ISelectionModeManager {
   enterSelectionMode(sdk: WmeSDK, options: SelectionModeOptions): SelectionModeResult {
     if (this._isActive) {
       throw new Error('Already in selection mode. Exit the current mode before entering a new one.');
+    }
+
+    // Try to acquire the cross-instance lock
+    if (!this._sharedStateManager.acquireLock()) {
+      throw new Error('Another SDK+ instance is already in selection mode. Only one selection mode can be active at a time.');
     }
 
     this._isActive = true;
@@ -84,24 +88,30 @@ export class SelectionModeManager implements ISelectionModeManager {
       this._sidebarController.preventTabSwitching();
     }
 
-    // Intercept setSelection to filter and handle selections
-    // 
-    // LIMITATION: This current implementation only intercepts SDK-based selections
-    // via `sdk.Editing.setSelection()`. It does NOT intercept:
-    // - Direct user clicks on map features
-    // - Selections made by other scripts not using the SDK
-    // - OpenLayers-level feature interactions
-    //
-    // FUTURE IMPROVEMENT: For better UX and comprehensive selection control,
-    // consider intercepting OpenLayers events directly:
-    // - Access W.map.segmentLayer, W.map.venueLayer, W.map.commentLayer, etc.
-    // - Each layer has a featureMap (key: Waze feature ID, value: OpenLayers feature)
-    // - For permanent hazards, use W.map.permanentHazardLayers (array of layers per PH type)
-    // - Intercept OpenLayers events to control:
-    //   * Feature selection (before/after select events)
-    //   * Hover states (can disable hover for non-allowed features)
-    //   * Click handlers on features
-    // - This would provide true control over ALL selection attempts, not just SDK calls
+    // Initialize OpenLayers-based selection control for comprehensive interception
+    // This provides control over user clicks, hover states, and all selection methods
+    this._openLayersController = new OpenLayersSelectionController(
+      options.filter,
+      (featureType, featureId) => {
+        // Check if selection should be allowed
+        if (!this._currentOptions) return false;
+        
+        const matches = matchesFilter(featureType, [featureId], this._currentOptions.filter);
+        
+        if (matches && this._currentOptions.onSelect) {
+          this._currentOptions.onSelect({
+            ids: [featureId],
+            objectType: featureType,
+          });
+        }
+        
+        // If capture only, don't allow native selection
+        return matches && !this._currentOptions.captureOnly;
+      }
+    );
+    this._openLayersController.activate();
+
+    // Also intercept SDK setSelection for scripts using the SDK API
     this._selectionInterceptor = new MethodInterceptor(
       sdk.Editing,
       'setSelection',
@@ -155,6 +165,10 @@ export class SelectionModeManager implements ISelectionModeManager {
             ...this._currentOptions.filter,
             ...newFilter,
           };
+          // Update OpenLayers controller filter too
+          if (this._openLayersController) {
+            this._openLayersController.updateFilter(newFilter);
+          }
         }
       },
     };
@@ -175,6 +189,12 @@ export class SelectionModeManager implements ISelectionModeManager {
       return;
     }
 
+    // Deactivate OpenLayers controller
+    if (this._openLayersController) {
+      this._openLayersController.deactivate();
+      this._openLayersController = null;
+    }
+
     // Restore tab switching
     if (this._currentOptions?.preventTabSwitching !== false && this._sidebarController) {
       this._sidebarController.allowTabSwitching();
@@ -190,6 +210,9 @@ export class SelectionModeManager implements ISelectionModeManager {
       this._selectionInterceptor.disable();
       this._selectionInterceptor = null;
     }
+
+    // Release the cross-instance lock
+    this._sharedStateManager.releaseLock();
 
     // Call onCancel if cancelled
     if (cancelled && this._currentOptions?.onCancel) {

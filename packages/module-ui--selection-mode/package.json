@@ -18,6 +18,7 @@
     "@wme-enhanced-sdk/method-interceptor": "^0.0.1",
     "@wme-enhanced-sdk/module-ui--sidebar-manager": "^0.0.1",
     "@wme-enhanced-sdk/sdk-patcher": "^0.0.1",
+    "@wme-enhanced-sdk/utils": "^0.0.1",
     "@wme-enhanced-sdk/wme-utils": "^0.0.1"
   }
 }
