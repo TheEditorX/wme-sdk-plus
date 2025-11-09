@@ -12,15 +12,15 @@ function getSidebarTabController(): ISidebarTabSwitchController {
 
 export default [
   new DefinePropertyRule(
-    'Sidebar.TabControl.preventTabSwitching',
+    'Sidebar.preventTabSwitching',
     () => getSidebarTabController().preventTabSwitching(),
   ),
   new DefinePropertyRule(
-    'Sidebar.TabControl.allowTabSwitching',
+    'Sidebar.allowTabSwitching',
     () => getSidebarTabController().allowTabSwitching(),
   ),
   new DefinePropertyRule(
-    'Sidebar.TabControl.isTabSwitchingPrevented',
+    'Sidebar.isTabSwitchingPrevented',
     () => getSidebarTabController().isTabSwitchingPrevented(),
   ),
 ] as SdkPatcherRule[];

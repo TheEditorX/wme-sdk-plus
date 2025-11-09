@@ -25,15 +25,15 @@ This design allows for future implementations using different mechanisms if need
 
 ```typescript
 // Prevent tab switching
-sdk.Sidebar.TabControl.preventTabSwitching();
+sdk.Sidebar.preventTabSwitching();
 
 // ... perform operations that would normally cause tab switches ...
 
 // Allow tab switching again
-sdk.Sidebar.TabControl.allowTabSwitching();
+sdk.Sidebar.allowTabSwitching();
 
 // Check if tab switching is currently prevented
-const isPrevented = sdk.Sidebar.TabControl.isTabSwitchingPrevented();
+const isPrevented = sdk.Sidebar.isTabSwitchingPrevented();
 ```
 
 ### Direct Usage

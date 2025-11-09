@@ -18,7 +18,7 @@ function getSelectionModeManager(): ISelectionModeManager {
 
 export default [
   new DefinePropertyRule(
-    'Editing.Selection.enterSelectionMode',
+    'Editing.enterSelectionMode',
     ({ sdk }: SdkPatcherRuleOperationArgs) => {
       return (options: SelectionModeOptions) => {
         return getSelectionModeManager().enterSelectionMode(sdk, options);
@@ -27,7 +27,7 @@ export default [
     { isFactory: true }
   ),
   new DefinePropertyRule(
-    'Editing.Selection.isInSelectionMode',
+    'Editing.isInSelectionMode',
     () => getSelectionModeManager().isInSelectionMode(),
   ),
 ] as SdkPatcherRule[];

@@ -25,7 +25,7 @@ When building scripts that need users to select specific map features, this modu
 ### Basic Selection Mode
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment'], // Only allow segment selection
   },
@@ -39,7 +39,7 @@ const selectionMode = sdk.Editing.Selection.enterSelectionMode({
 ### Multiple Feature Types
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment', 'venue', 'bigJunction'], // Allow multiple types
   },
@@ -57,7 +57,7 @@ setTimeout(() => selectionMode.exit(), 30000);
 ```typescript
 const allowedSegmentIds = [12345, 67890, 11111];
 
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment'],
     allowedIds: allowedSegmentIds, // Only these segments can be selected
@@ -72,7 +72,7 @@ const selectionMode = sdk.Editing.Selection.enterSelectionMode({
 
 ```typescript
 // Don't perform native selection, just capture the selection attempt
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment'],
   },
@@ -88,7 +88,7 @@ const selectionMode = sdk.Editing.Selection.enterSelectionMode({
 ### With Tab Control
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['venue'],
   },
@@ -103,7 +103,7 @@ const selectionMode = sdk.Editing.Selection.enterSelectionMode({
 ### Dynamic Filter Updates
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment'],
   },
@@ -126,7 +126,7 @@ selectionMode.updateFilter({
 ### Permanent Hazard Filtering
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['permanentHazard'],
     permanentHazardSubtypes: ['schoolZone'], // Only school zones
@@ -140,7 +140,7 @@ const selectionMode = sdk.Editing.Selection.enterSelectionMode({
 ### With Cancellation
 
 ```typescript
-const selectionMode = sdk.Editing.Selection.enterSelectionMode({
+const selectionMode = sdk.Editing.enterSelectionMode({
   filter: {
     types: ['segment'],
   },
@@ -160,7 +160,7 @@ setTimeout(() => {
 
 ## API Reference
 
-### `sdk.Editing.Selection.enterSelectionMode(options: SelectionModeOptions): SelectionModeResult`
+### `sdk.Editing.enterSelectionMode(options: SelectionModeOptions): SelectionModeResult`
 
 Enters a special selection mode with the specified options.
 
@@ -180,7 +180,7 @@ Enters a special selection mode with the specified options.
 - `getFilter()`: Gets the current filter
 - `updateFilter(filter)`: Updates the filter dynamically
 
-### `sdk.Editing.Selection.isInSelectionMode(): boolean`
+### `sdk.Editing.isInSelectionMode(): boolean`
 
 Returns whether currently in a special selection mode.
 
