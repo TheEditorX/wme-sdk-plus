@@ -75,8 +75,7 @@ export const sidebarTabRenderedEvent = createEventDefinition(
       }
     });
 
-    const sidebarContentEl = document.getElementById('sidebarContent');
-    const tabContentEl = sidebarContentEl?.getElementsByClassName('tab-content')[0];
+    const tabContentEl = document.getElementById('sidebarContent')?.querySelector('.tab-content');
     if (tabContentEl) {
       mutationObserver.observe(
         tabContentEl,
