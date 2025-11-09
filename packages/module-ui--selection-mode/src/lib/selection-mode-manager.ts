@@ -41,6 +41,15 @@ function matchesFilter(
  * 
  * Manages a special selection mode that allows script writers to guide users
  * in selecting specific map features with filtering and custom behavior.
+ * 
+ * @remarks
+ * Note on multiple SDK+ instances: Each instance of SelectionModeManager tracks
+ * its own state independently. If multiple scripts or imports use different SDK+
+ * instances, their selection modes will not coordinate with each other. For
+ * cross-script/cross-instance coordination, a shared storage mechanism on
+ * `window` (or `unsafeWindow`) with a version-aware protocol would be needed.
+ * This is currently not implemented to keep the API simple and avoid
+ * version mismatch issues.
  */
 export class SelectionModeManager implements ISelectionModeManager {
   private _isActive = false;
@@ -76,6 +85,23 @@ export class SelectionModeManager implements ISelectionModeManager {
     }
 
     // Intercept setSelection to filter and handle selections
+    // 
+    // LIMITATION: This current implementation only intercepts SDK-based selections
+    // via `sdk.Editing.setSelection()`. It does NOT intercept:
+    // - Direct user clicks on map features
+    // - Selections made by other scripts not using the SDK
+    // - OpenLayers-level feature interactions
+    //
+    // FUTURE IMPROVEMENT: For better UX and comprehensive selection control,
+    // consider intercepting OpenLayers events directly:
+    // - Access W.map.segmentLayer, W.map.venueLayer, W.map.commentLayer, etc.
+    // - Each layer has a featureMap (key: Waze feature ID, value: OpenLayers feature)
+    // - For permanent hazards, use W.map.permanentHazardLayers (array of layers per PH type)
+    // - Intercept OpenLayers events to control:
+    //   * Feature selection (before/after select events)
+    //   * Hover states (can disable hover for non-allowed features)
+    //   * Click handlers on features
+    // - This would provide true control over ALL selection attempts, not just SDK calls
     this._selectionInterceptor = new MethodInterceptor(
       sdk.Editing,
       'setSelection',
