@@ -41,6 +41,9 @@
     },
     {
       "path": "./packages/patch-events"
+    },
+    {
+      "path": "./packages/module-ui--sidebar-manager"
     }
   ]
 }
