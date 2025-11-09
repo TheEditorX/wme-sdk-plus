@@ -16,6 +16,12 @@
       "path": "../sdk-patcher"
     },
     {
+      "path": "../module-ui--selection-mode"
+    },
+    {
+      "path": "../module-ui--sidebar-manager"
+    },
+    {
       "path": "../patch-middleware"
     },
     {
