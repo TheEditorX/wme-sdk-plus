@@ -42,7 +42,7 @@ function isSidebarTabPane(node: Node): node is HTMLElement & { id: keyof typeof 
 }
 
 export const sidebarTabRenderedEvent = createEventDefinition(
-  'wme-sidebar-tab-rendered',
+  'wme-sidebar-tab-opened',
   ({ trigger }) => {
     const triggerForSidebarTab = (tabElement: HTMLElement & { id: keyof typeof SIDEBAR_TAB_PANES_TO_TYPES }) => {
       const tabType = SIDEBAR_TAB_PANES_TO_TYPES[tabElement.id];
