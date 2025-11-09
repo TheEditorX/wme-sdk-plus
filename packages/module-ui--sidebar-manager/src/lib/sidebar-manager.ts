@@ -37,6 +37,11 @@ export interface ISidebarTabSwitchController {
   isTabSwitchingPrevented(): boolean;
 
   /**
+   * Gets the current tab from the URL
+   */
+  getCurrentTab(): string | null;
+
+  /**
    * Saves the current tab to restore later
    */
   saveCurrentTab(): void;
@@ -100,10 +105,18 @@ export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchCont
         // Check if the tab parameter changed
         const tabChanged = currentLocationParams.tab !== newLocationParams.tab;
         
-        // If tab changed, block the navigation regardless of other params
+        // If tab changed, allow other params but restore the tab
         if (tabChanged) {
-          // Return undefined to prevent the pushState from executing
-          return undefined;
+          // Create new URL with all new params except tab (keep old tab)
+          const modifiedUrl = new URL(newLocation as string, window.location.href);
+          if (currentLocationParams.tab) {
+            modifiedUrl.searchParams.set('tab', currentLocationParams.tab);
+          } else {
+            modifiedUrl.searchParams.delete('tab');
+          }
+          // Push the modified URL instead
+          window.history.pushState(state, '', modifiedUrl.toString());
+          return undefined; // Prevent the original pushState
         }
 
         // Allow all other navigation
@@ -135,11 +148,18 @@ export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchCont
   }
 
   /**
+   * Gets the current tab from the URL
+   */
+  getCurrentTab(): string | null {
+    const currentUrl = new URL(window.location.href);
+    return currentUrl.searchParams.get('tab');
+  }
+
+  /**
    * Saves the current tab to restore later
    */
   saveCurrentTab(): void {
-    const currentUrl = new URL(window.location.href);
-    this._savedTab = currentUrl.searchParams.get('tab');
+    this._savedTab = this.getCurrentTab();
   }
 
   /**

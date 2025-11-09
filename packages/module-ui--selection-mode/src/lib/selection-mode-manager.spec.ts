@@ -15,6 +15,7 @@ const createMockSidebarController = (): ISidebarTabSwitchController => ({
   preventTabSwitching: vi.fn(),
   allowTabSwitching: vi.fn(),
   isTabSwitchingPrevented: vi.fn(() => false),
+  getCurrentTab: vi.fn(() => null),
   saveCurrentTab: vi.fn(),
   restoreSavedTab: vi.fn(),
   destroy: vi.fn(),
