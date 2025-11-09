@@ -1,5 +1,6 @@
 import { SdkPatcherRule } from '@wme-enhanced-sdk/sdk-patcher';
 import { featureEditorRenderedEventDefinition } from './events/index.js';
+import { EventDefinition } from './interfaces/event-definition.js';
 import { EventEffectDestructor } from './interfaces/event-effect.js';
 import { MethodInterceptor } from '@wme-enhanced-sdk/method-interceptor';
 
@@ -8,8 +9,8 @@ const EVENTS = [
   featureEditorRenderedEventDefinition,
 ];
 
-function hasEventByName(eventName: string): boolean {
-  return EVENTS.some((event) => event.eventName === eventName);
+function getEventByName(eventName: string): EventDefinition | null {
+  return EVENTS.find((event) => event.eventName === eventName) || null;
 }
 
 export default [
@@ -47,12 +48,15 @@ export default [
 
         const { eventName, eventHandler } = options;
         // we only process if we expect the shape: 1 arg only, we have an eventName of ours events, and an event handler
-        if (restArgs.length || !eventName || !hasEventByName(eventName) || !eventHandler) {
-          return triggerDefault();
-        }
+        if (restArgs.length || !eventName || !eventHandler) return triggerDefault();
+
+        const eventDefinition = getEventByName(eventName);
+        if (!eventDefinition) return triggerDefault();
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (sdk.Events as any).eventBus.on(eventName, eventHandler);
+        const result = (sdk.Events as any).eventBus.on(eventName, eventHandler);
+        eventDefinition.onSubscribed?.();
+        return result;
       }
     );
 
@@ -72,12 +76,15 @@ export default [
 
         const { eventName } = options;
         // we only process if we expect the shape: 1 arg only, we have an eventName of ours events, and an event handler
-        if (restArgs.length || !eventName || !hasEventByName(eventName)) {
-          return triggerDefault();
-        }
+        if (restArgs.length || !eventName) return triggerDefault();
+
+        const eventDefinition = getEventByName(eventName);
+        if (!eventDefinition) return triggerDefault();
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (sdk.Events as any).eventBus.once(eventName);
+        const result = (sdk.Events as any).eventBus.once(eventName);
+        eventDefinition.onSubscribed?.();
+        return result;
       }
     );
 
@@ -97,12 +104,15 @@ export default [
 
         const { eventName, eventHandler } = options;
         // we only process if we expect the shape: 1 arg only, we have an eventName of ours events, and an event handler
-        if (restArgs.length || !eventName || !hasEventByName(eventName) || !eventHandler) {
-          return triggerDefault();
-        }
+        if (restArgs.length || !eventName) return triggerDefault();
+
+        const eventDefinition = getEventByName(eventName);
+        if (!eventDefinition) return triggerDefault();
 
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        return (sdk.Events as any).eventBus.off(eventName, eventHandler);
+        const result = (sdk.Events as any).eventBus.off(eventName, eventHandler);
+        eventDefinition.onUnsubscribed?.();
+        return result;
       }
     );
 
