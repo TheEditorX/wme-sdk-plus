@@ -7,7 +7,6 @@ const createMockSdk = () => ({
   Editing: {
     setSelection: vi.fn(),
     getSelection: vi.fn(),
-    clearSelection: vi.fn(),
   },
 });
 
@@ -16,6 +15,8 @@ const createMockSidebarController = (): ISidebarTabSwitchController => ({
   preventTabSwitching: vi.fn(),
   allowTabSwitching: vi.fn(),
   isTabSwitchingPrevented: vi.fn(() => false),
+  saveCurrentTab: vi.fn(),
+  restoreSavedTab: vi.fn(),
   destroy: vi.fn(),
 });
 

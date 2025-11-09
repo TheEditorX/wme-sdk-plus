@@ -17,14 +17,11 @@ function matchesFilter(
   ids: Array<number | string>,
   filter: SelectionFilter,
 ): boolean {
-  // Check if type is allowed
-  if (filter.types && filter.types.length > 0) {
-    if (!filter.types.includes(objectType)) {
-      return false;
-    }
+  // Check if type is allowed and if IDs are in the allowed list
+  if (filter.types && filter.types.length > 0 && !filter.types.includes(objectType)) {
+    return false;
   }
 
-  // Check if IDs are in the allowed list
   if (filter.allowedIds && filter.allowedIds.length > 0) {
     const hasAllowedId = ids.some(id => filter.allowedIds!.includes(id));
     if (!hasAllowedId) {
@@ -51,7 +48,6 @@ export class SelectionModeManager implements ISelectionModeManager {
   private _currentSdk: WmeSDK | null = null;
   private _sidebarController: ISidebarTabSwitchController | null = null;
   private _selectionInterceptor: MethodInterceptor<any, 'setSelection'> | null = null;
-  private _originalTab: string | null = null;
 
   constructor(sidebarController?: ISidebarTabSwitchController) {
     this._sidebarController = sidebarController || null;
@@ -69,10 +65,9 @@ export class SelectionModeManager implements ISelectionModeManager {
     this._currentOptions = options;
     this._currentSdk = sdk;
 
-    // Store current tab to restore later if needed
-    if (options.keepCurrentTab) {
-      const currentUrl = new URL(window.location.href);
-      this._originalTab = currentUrl.searchParams.get('tab');
+    // Save current tab to restore later if needed
+    if (options.keepCurrentTab && this._sidebarController) {
+      this._sidebarController.saveCurrentTab();
     }
 
     // Prevent tab switching if requested
@@ -160,10 +155,8 @@ export class SelectionModeManager implements ISelectionModeManager {
     }
 
     // Restore original tab if needed
-    if (this._currentOptions?.keepCurrentTab && this._originalTab) {
-      const currentUrl = new URL(window.location.href);
-      currentUrl.searchParams.set('tab', this._originalTab);
-      window.history.pushState(null, '', currentUrl.toString());
+    if (this._currentOptions?.keepCurrentTab && this._sidebarController) {
+      this._sidebarController.restoreSavedTab();
     }
 
     // Disable interceptor
@@ -181,7 +174,6 @@ export class SelectionModeManager implements ISelectionModeManager {
     this._isActive = false;
     this._currentOptions = null;
     this._currentSdk = null;
-    this._originalTab = null;
   }
 
   /**

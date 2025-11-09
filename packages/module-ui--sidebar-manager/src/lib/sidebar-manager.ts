@@ -37,6 +37,16 @@ export interface ISidebarTabSwitchController {
   isTabSwitchingPrevented(): boolean;
 
   /**
+   * Saves the current tab to restore later
+   */
+  saveCurrentTab(): void;
+
+  /**
+   * Restores the previously saved tab
+   */
+  restoreSavedTab(): void;
+
+  /**
    * Cleans up resources and restores original behavior
    */
   destroy(): void;
@@ -67,6 +77,7 @@ export interface ISidebarTabSwitchController {
  */
 export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchController {
   private readonly _historyPushStateInterceptor: MethodInterceptor<History, 'pushState'>;
+  private _savedTab: string | null = null;
 
   constructor() {
     this._historyPushStateInterceptor = new MethodInterceptor(
@@ -86,8 +97,11 @@ export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchCont
         const currentLocationParams = Object.fromEntries(currentUrl.searchParams.entries());
         const newLocationParams = Object.fromEntries(newUrl.searchParams.entries());
 
-        // If only the 'tab' parameter changed, block the navigation
-        if (currentLocationParams.tab !== newLocationParams.tab) {
+        // Check if the tab parameter changed
+        const tabChanged = currentLocationParams.tab !== newLocationParams.tab;
+        
+        // If tab changed, block the navigation regardless of other params
+        if (tabChanged) {
           // Return undefined to prevent the pushState from executing
           return undefined;
         }
@@ -118,6 +132,26 @@ export class UrlBasedSidebarTabSwitchController implements ISidebarTabSwitchCont
    */
   isTabSwitchingPrevented(): boolean {
     return this._historyPushStateInterceptor.enabled;
+  }
+
+  /**
+   * Saves the current tab to restore later
+   */
+  saveCurrentTab(): void {
+    const currentUrl = new URL(window.location.href);
+    this._savedTab = currentUrl.searchParams.get('tab');
+  }
+
+  /**
+   * Restores the previously saved tab
+   */
+  restoreSavedTab(): void {
+    if (this._savedTab !== null) {
+      const currentUrl = new URL(window.location.href);
+      currentUrl.searchParams.set('tab', this._savedTab);
+      window.history.pushState(null, '', currentUrl.toString());
+      this._savedTab = null;
+    }
   }
 
   /**
