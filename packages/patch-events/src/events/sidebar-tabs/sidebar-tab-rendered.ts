@@ -20,6 +20,17 @@ const SIDEBAR_TAB_PANES_TO_TYPES = {
   'sidepanel-feature-editor': SidebarTabPanes.FeatureEditor,
 }
 
+const SIDEBAR_TAB_PANES_TO_SCRIPT_TYPES: Record<SidebarTabPanes, string> = {
+  [SidebarTabPanes.None]: '',
+  [SidebarTabPanes.FeatureEditor]: 'select',
+  [SidebarTabPanes.IssueTracker]: 'solve',
+  [SidebarTabPanes.MTEs]: 'events',
+  [SidebarTabPanes.Prefs]: 'settings',
+  [SidebarTabPanes.UserscriptTab]: 'scripts',
+  [SidebarTabPanes.Drives]: 'drives',
+  [SidebarTabPanes.Areas]: 'areas',
+}
+
 function isSidebarTabPane(node: Node): node is HTMLElement & { id: keyof typeof SIDEBAR_TAB_PANES_TO_TYPES } {
   return !!(
     node instanceof HTMLElement &&
@@ -37,7 +48,7 @@ export const sidebarTabRenderedEvent = createEventDefinition(
       const tabType = SIDEBAR_TAB_PANES_TO_TYPES[tabElement.id];
       if (!tabType) return;
       trigger({
-        tabType,
+        tabType: SIDEBAR_TAB_PANES_TO_SCRIPT_TYPES[tabType],
         tabElement,
       });
     }
