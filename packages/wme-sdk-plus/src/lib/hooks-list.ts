@@ -5,6 +5,8 @@ import DataModelPermanentHazardsHook from '@wme-enhanced-sdk/patch-datamodel--pe
 import DataModelBigJunctionsModule from '@wme-enhanced-sdk/patch-datamodel--bigjunctions';
 import MiddlewareModule from '@wme-enhanced-sdk/patch-middleware';
 import EventsModule from '@wme-enhanced-sdk/patch-events';
+import SidebarManagerModule from '@wme-enhanced-sdk/module-ui--sidebar-manager';
+import SelectionModeModule from '@wme-enhanced-sdk/module-ui--selection-mode';
 
 interface ListedHook {
   hook: SdkPatcherRule[];
@@ -18,6 +20,8 @@ const allHooks: Record<string, ListedHook> = {
   'DataModel.BigJunctions': { hook: DataModelBigJunctionsModule },
   'Events': { hook: EventsModule },
   'Middlewares': { hook: MiddlewareModule },
+  'UI.SidebarManager': { hook: SidebarManagerModule },
+  'UI.SelectionMode': { hook: SelectionModeModule, deps: ['UI.SidebarManager'] },
 };
 
 export default allHooks;

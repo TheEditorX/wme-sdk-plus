@@ -4,31 +4,22 @@
   "include": [],
   "references": [
     {
-      "path": "../patch-datamodel--permanenthazards"
+      "path": "../wme-utils"
     },
     {
-      "path": "../patch-datamodel--mapcomments"
+      "path": "../utils"
     },
     {
-      "path": "../patch-editing--transactions"
+      "path": "../shared-state"
     },
     {
       "path": "../sdk-patcher"
     },
     {
-      "path": "../module-ui--selection-mode"
-    },
-    {
       "path": "../module-ui--sidebar-manager"
     },
     {
-      "path": "../patch-middleware"
-    },
-    {
-      "path": "../patch-events"
-    },
-    {
-      "path": "../patch-datamodel--bigjunctions"
+      "path": "../method-interceptor"
     },
     {
       "path": "./tsconfig.lib.json"
