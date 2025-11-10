@@ -14,22 +14,7 @@
   ],
   "references": [
     {
-      "path": "../wme-utils/tsconfig.lib.json"
-    },
-    {
       "path": "../utils/tsconfig.lib.json"
-    },
-    {
-      "path": "../shared-state/tsconfig.lib.json"
-    },
-    {
-      "path": "../sdk-patcher/tsconfig.lib.json"
-    },
-    {
-      "path": "../module-ui--sidebar-manager/tsconfig.lib.json"
-    },
-    {
-      "path": "../method-interceptor/tsconfig.lib.json"
     }
   ]
 }

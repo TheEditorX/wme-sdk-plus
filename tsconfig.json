@@ -47,6 +47,9 @@
     },
     {
       "path": "./packages/module-ui--selection-mode"
+    },
+    {
+      "path": "./packages/shared-state"
     }
   ]
 }

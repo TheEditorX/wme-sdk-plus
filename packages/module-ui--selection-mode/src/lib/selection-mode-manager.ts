@@ -1,6 +1,7 @@
 import { WmeSDK } from 'wme-sdk-typings';
 import { ISidebarTabSwitchController } from '@wme-enhanced-sdk/module-ui--sidebar-manager';
 import { MethodInterceptor, CONTINUE_INVOCATION, interceptBeforeInvocation } from '@wme-enhanced-sdk/method-interceptor';
+import { SharedStateManager } from '@wme-enhanced-sdk/shared-state';
 import {
   ISelectionModeManager,
   SelectionModeOptions,
@@ -8,7 +9,6 @@ import {
   SelectionFilter,
   SelectableFeatureType,
 } from './types.js';
-import { SharedSelectionStateManager } from './shared-selection-state.js';
 import { OpenLayersSelectionController } from './openlayers-selection-controller.js';
 
 /**
@@ -53,12 +53,15 @@ export class SelectionModeManager implements ISelectionModeManager {
   private _currentSdk: WmeSDK | null = null;
   private _sidebarController: ISidebarTabSwitchController | null = null;
   private _selectionInterceptor: MethodInterceptor<any, 'setSelection'> | null = null;
-  private _sharedStateManager: SharedSelectionStateManager;
+  private _sharedStateManager: SharedStateManager;
   private _openLayersController: OpenLayersSelectionController | null = null;
 
   constructor(sidebarController?: ISidebarTabSwitchController) {
     this._sidebarController = sidebarController || null;
-    this._sharedStateManager = new SharedSelectionStateManager();
+    this._sharedStateManager = new SharedStateManager({
+      namespace: '__WME_SDK_PLUS_SELECTION_MODE__',
+      staleLockTimeout: 60000,
+    });
   }
 
   /**
@@ -70,7 +73,8 @@ export class SelectionModeManager implements ISelectionModeManager {
     }
 
     // Try to acquire the cross-instance lock
-    if (!this._sharedStateManager.acquireLock()) {
+    const lockResult = this._sharedStateManager.acquireLock('selectionMode');
+    if (!lockResult.success) {
       throw new Error('Another SDK+ instance is already in selection mode. Only one selection mode can be active at a time.');
     }
 
@@ -212,7 +216,7 @@ export class SelectionModeManager implements ISelectionModeManager {
     }
 
     // Release the cross-instance lock
-    this._sharedStateManager.releaseLock();
+    this._sharedStateManager.releaseLock('selectionMode');
 
     // Call onCancel if cancelled
     if (cancelled && this._currentOptions?.onCancel) {
