@@ -24,6 +24,12 @@
       "path": "../sdk-patcher/tsconfig.lib.json"
     },
     {
+      "path": "../module-ui--selection-mode/tsconfig.lib.json"
+    },
+    {
+      "path": "../module-ui--sidebar-manager/tsconfig.lib.json"
+    },
+    {
       "path": "../patch-middleware/tsconfig.lib.json"
     },
     {

@@ -1,5 +1,5 @@
 {
-  "name": "@wme-enhanced-sdk/wme-sdk-plus",
+  "name": "@wme-enhanced-sdk/shared-state",
   "version": "0.0.1",
   "private": true,
   "type": "module",
@@ -15,10 +15,6 @@
     }
   },
   "dependencies": {
-    "@wme-enhanced-sdk/patch-datamodel--bigjunctions": "^0.0.1",
-    "@wme-enhanced-sdk/patch-events": "^0.0.1",
-    "@wme-enhanced-sdk/patch-middleware": "^0.0.1",
-    "@wme-enhanced-sdk/module-ui--sidebar-manager": "^0.0.1",
-    "@wme-enhanced-sdk/module-ui--selection-mode": "^0.0.1"
+    "@wme-enhanced-sdk/utils": "^0.0.1"
   }
 }
