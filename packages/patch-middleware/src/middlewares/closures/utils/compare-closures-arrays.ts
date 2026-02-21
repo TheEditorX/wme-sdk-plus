@@ -2,8 +2,8 @@ import { Closure } from '../interfaces/closure.js';
 
 function deepEqual<T>(a: T, b: T): boolean {
   if (typeof a !== typeof b) return false;
-  if (typeof a !== 'object') return false;
-  if (!a || !b) return false;
+  if (typeof a !== 'object') return a === b;
+  if (a === null || b === null) return a === b;
 
   return Object.keys(a).every((key) => {
     if (!Object.prototype.hasOwnProperty.call(b, key)) return false;

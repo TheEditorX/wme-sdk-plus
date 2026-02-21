@@ -112,15 +112,15 @@ export default [
           const mutatedContextData = await triggerMiddlewares(
             initialContextData
           );
-          const hasDirtyClosures = compareClosuresArrays(
+          const closuresEqual = compareClosuresArrays(
             initialContextData.closures,
             mutatedContextData.closures
           );
-          const hasDirtyDeleteClosures = compareClosuresArrays(
+          const deleteClosuresEqual = compareClosuresArrays(
             initialContextData.deleteClosures,
             mutatedContextData.deleteClosures
           );
-          if (!hasDirtyClosures && !hasDirtyDeleteClosures) return;
+          if (closuresEqual && deleteClosuresEqual) return;
 
           const AddRoadClosureAction = allClosureActions.find((action) =>
             isAddRoadClosureAction(action)
