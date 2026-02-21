@@ -101,8 +101,8 @@ export default [
         doActions(() => {
           const mapComment = sdk.DataModel.MapComments.updateComment({
             mapCommentId: args.mapCommentId,
-            subject: args.subject ?? "",
-            body: args.body ?? "",
+            subject: args.subject,
+            body: args.body,
             geometry: args.geometry,
           });
 
