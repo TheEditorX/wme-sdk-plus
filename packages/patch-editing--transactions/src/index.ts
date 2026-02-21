@@ -14,31 +14,40 @@ function getTransactionManager() {
   return transactionManager;
 }
 
+export function beginTransaction(manager: TransactionManager = getTransactionManager()): void {
+  manager.beginTransaction();
+}
+export function commitTransaction(description?: string, manager: TransactionManager = getTransactionManager()): void {
+  manager.commitTransaction(description);
+}
+export function cancelTransaction(manager: TransactionManager = getTransactionManager()): void {
+  manager.cancelTransaction();
+}
+export function doActions(cb: () => void, description?: string, manager?: TransactionManager): void {
+  beginTransaction(manager);
+  try {
+    cb();
+    commitTransaction(description, manager);
+  } catch (e) {
+    cancelTransaction(manager);
+    throw e;
+  }
+}
 export default [
   new DefinePropertyRule(
     'Editing.beginTransaction',
-    () => getTransactionManager().beginTransaction(),
+    () => beginTransaction(),
   ),
   new DefinePropertyRule(
     'Editing.commitTransaction',
-    (description?: string) => getTransactionManager().commitTransaction(description),
+    (description?: string) => commitTransaction(description),
   ),
   new DefinePropertyRule(
     'Editing.cancelTransaction',
-    () => getTransactionManager().cancelTransaction(),
+    () => cancelTransaction(),
   ),
   new DefinePropertyRule(
     'Editing.doActions',
-    (cb: () => void, description?: string) => {
-      const transactionManager = getTransactionManager();
-      transactionManager.beginTransaction();
-      try {
-        cb();
-        transactionManager.commitTransaction(description);
-      } catch (e) {
-        transactionManager.cancelTransaction();
-        throw e;
-      }
-    }
+    (cb: () => void, description?: string) => doActions(cb, description)
   ),
 ];
