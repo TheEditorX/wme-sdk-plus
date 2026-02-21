@@ -2,8 +2,8 @@ import { Closure } from '../interfaces/closure.js';
 
 function deepEqual<T>(a: T, b: T): boolean {
   if (typeof a !== typeof b) return false;
-  if (typeof a !== 'object') return false;
-  if (!a || !b) return false;
+  if (typeof a !== 'object') return a === b;
+  if (a === null || b === null) return a === b;
 
   return Object.keys(a).every((key) => {
     if (!Object.prototype.hasOwnProperty.call(b, key)) return false;
@@ -22,6 +22,6 @@ function hasClosure(closure: Partial<Closure>, array: Partial<Closure>[]): boole
 }
 
 export function compareClosuresArrays(a: Partial<Closure>[], b: Partial<Closure>[]): boolean {
-  if (a.length !== b.length) return false;
-  return a.every((closure) => hasClosure(closure, b));
+  if (a.length !== b.length) return true;
+  return !a.every((closure) => hasClosure(closure, b));
 }
