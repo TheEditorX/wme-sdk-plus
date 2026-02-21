@@ -95,9 +95,9 @@ export default [
 
   new DefinePropertyRule('DataModel.MapComments.updateMapComment', ({ sdk }: { sdk: WmeSDK }) => {
     if (typeof sdk.DataModel.MapComments.updateComment === 'function') {
-      console.warn('[WME SDK+]: "MapComments.updateMapComment" method from SDK+ is deprecated. Please use "MapComments.addComment" from the official SDK instead. This method will cease to exist in future SDK+ versions');
-
       return (args: UpdateMapCommentsArgs) => {
+        console.warn('[WME SDK+]: "MapComments.updateMapComment" method from SDK+ is deprecated. Please use "MapComments.updateComment" from the official SDK instead. This method will cease to exist in future SDK+ versions');
+
         doActions(() => {
           const mapComment = sdk.DataModel.MapComments.updateComment({
             mapCommentId: args.mapCommentId,
