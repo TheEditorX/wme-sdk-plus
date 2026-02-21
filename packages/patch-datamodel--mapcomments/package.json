@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@turf/helpers": "^7.2.0",
+    "@wme-enhanced-sdk/patch-editing--transactions": "^0.0.1",
     "geojson": "^0.5.0"
   }
 }
