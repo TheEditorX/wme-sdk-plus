@@ -40,11 +40,11 @@ export default [
     return mapComment.getID();
   }),
 
-  new DefinePropertyRule('DataModel.MapComments.updateMapComment', ({ sdkInstance }: { sdkInstance: WmeSDK }) => {
+  new DefinePropertyRule('DataModel.MapComments.updateMapComment', ({ sdk }: { sdk: WmeSDK }) => {
     return (args: UpdateMapCommentsArgs) => {
       const mapComment = getMapComment(args.mapCommentId);
       if (!mapComment) {
-        throw new sdkInstance.Errors.DataModelNotFoundError('mapComment', args.mapCommentId);
+        throw new sdk.Errors.DataModelNotFoundError('mapComment', args.mapCommentId);
       }
 
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
