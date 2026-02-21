@@ -13,6 +13,9 @@
       "path": "../sdk-patcher"
     },
     {
+      "path": "../patch-editing--transactions"
+    },
+    {
       "path": "./tsconfig.lib.json"
     },
     {

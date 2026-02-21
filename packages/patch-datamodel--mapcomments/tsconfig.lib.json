@@ -19,6 +19,9 @@
     },
     {
       "path": "../sdk-patcher/tsconfig.lib.json"
+    },
+    {
+      "path": "../patch-editing--transactions/tsconfig.lib.json"
     }
   ],
   "exclude": [
