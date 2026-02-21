@@ -23,10 +23,26 @@ export function commitTransaction(description?: string, manager: TransactionMana
 export function cancelTransaction(manager: TransactionManager = getTransactionManager()): void {
   manager.cancelTransaction();
 }
-export function doActions<T>(cb: () => T, description?: string, manager?: TransactionManager): T {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export function doActions<T>(cb: () => T extends Promise<any> ? never : T, description?: string, manager?: TransactionManager): T {
   beginTransaction(manager);
   try {
     const result = cb();
+    if (result instanceof Promise) {
+      console.error(
+        'doActions detected an async callback. Async operations are not supported because ' +
+        'actions added after the transaction closes cannot be captured. Complete async work ' +
+        'before calling doActions, or use synchronous callbacks only.\n\n' +
+
+        'The provided callback will continue to execute in this session and may have side-effects ' +
+        'on the WME session, and may have the actions generated within that callback to leak outside ' +
+        'the boundaries of the transaction into the change log.'
+      );
+      cancelTransaction(manager);
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      return undefined!;
+    }
+
     commitTransaction(description, manager);
     return result;
   } catch (e) {
@@ -34,6 +50,7 @@ export function doActions<T>(cb: () => T, description?: string, manager?: Transa
     throw e;
   }
 }
+
 export default [
   new DefinePropertyRule(
     'Editing.beginTransaction',
@@ -49,6 +66,7 @@ export default [
   ),
   new DefinePropertyRule(
     'Editing.doActions',
-    <T>(cb: () => T, description?: string) => doActions(cb, description)
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    <T>(cb: () => T extends Promise<any> ? never : T, description?: string) => doActions(cb, description)
   ),
 ];
