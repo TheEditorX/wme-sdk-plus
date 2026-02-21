@@ -23,11 +23,12 @@ export function commitTransaction(description?: string, manager: TransactionMana
 export function cancelTransaction(manager: TransactionManager = getTransactionManager()): void {
   manager.cancelTransaction();
 }
-export function doActions(cb: () => void, description?: string, manager?: TransactionManager): void {
+export function doActions<T>(cb: () => T, description?: string, manager?: TransactionManager): T {
   beginTransaction(manager);
   try {
-    cb();
+    const result = cb();
     commitTransaction(description, manager);
+    return result;
   } catch (e) {
     cancelTransaction(manager);
     throw e;
@@ -48,6 +49,6 @@ export default [
   ),
   new DefinePropertyRule(
     'Editing.doActions',
-    (cb: () => void, description?: string) => doActions(cb, description)
+    <T>(cb: () => T, description?: string) => doActions(cb, description)
   ),
 ];
