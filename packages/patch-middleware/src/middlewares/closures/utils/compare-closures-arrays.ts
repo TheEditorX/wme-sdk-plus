@@ -22,6 +22,6 @@ function hasClosure(closure: Partial<Closure>, array: Partial<Closure>[]): boole
 }
 
 export function compareClosuresArrays(a: Partial<Closure>[], b: Partial<Closure>[]): boolean {
-  if (a.length !== b.length) return true;
-  return !a.every((closure) => hasClosure(closure, b));
+  if (a.length !== b.length) return false;
+  return a.every((closure) => hasClosure(closure, b));
 }

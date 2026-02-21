@@ -120,7 +120,7 @@ export default [
             initialContextData.deleteClosures,
             mutatedContextData.deleteClosures
           );
-          if (!hasDirtyClosures && !hasDirtyDeleteClosures) return;
+          if (hasDirtyClosures && hasDirtyDeleteClosures) return;
 
           const AddRoadClosureAction = allClosureActions.find((action) =>
             isAddRoadClosureAction(action)

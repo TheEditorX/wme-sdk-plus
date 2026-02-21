@@ -51,7 +51,7 @@ export function middlewareClosureToWmeClosure(
     eventId: closure.eventId,
     externalProvider: null,
     externalProviderId: null,
-    provider: (closure as SegmentClosure).provider ?? null,
+    provider: 'provider' in closure ? closure.provider : null,
     createdBy: null!,
     createdOn: null!,
     updatedBy: null!,
