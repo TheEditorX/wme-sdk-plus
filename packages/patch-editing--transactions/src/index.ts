@@ -27,6 +27,18 @@ export function doActions<T>(cb: () => T, description?: string, manager?: Transa
   beginTransaction(manager);
   try {
     const result = cb();
+    if (result instanceof Promise) {
+      return result.then(
+        (val) => {
+          commitTransaction(description, manager);
+          return val;
+        },
+        (err) => {
+          cancelTransaction(manager);
+          throw err;
+        },
+      ) as T;
+    }
     commitTransaction(description, manager);
     return result;
   } catch (e) {
