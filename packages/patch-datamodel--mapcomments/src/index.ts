@@ -138,7 +138,7 @@ export default [
       if (args.geometry) newAttributes.geoJSONGeometry = args.geometry;
       if (args.subject) newAttributes.subject = args.subject;
       if (args.body) newAttributes.body = args.body;
-      if (args.lockRank) newAttributes.lockRank = args.lockRank;
+      if (args.lockRank !== undefined) newAttributes.lockRank = args.lockRank;
   
       pushUpdateObjectAction(mapComment, newAttributes);
     }
