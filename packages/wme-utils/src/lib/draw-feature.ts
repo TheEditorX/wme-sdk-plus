@@ -9,7 +9,7 @@ import {
 const interceptDrawControl = (effect?: (control: any) => void) => {
   return new Promise<any>((resolve) => {
     const window = getWindow<{ W: any; }>();
-    const swapper = new PropertySwapper(window.W.map.olMap, 'addControl');
+    const swapper = new PropertySwapper(window.W.map.getOLMap(), 'addControl');
     swapper.swap((control: any) => {
       effect?.(control);
       resolve(control);
