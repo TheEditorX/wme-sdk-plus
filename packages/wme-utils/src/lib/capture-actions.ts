@@ -15,15 +15,24 @@ export interface DataModelRepository {
   actionManager: { add: (...args: any[]) => any };
 }
 
+export interface CaptureActionsOptions {
+  model?: DataModelRepository;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  actionResult?: boolean | ((action: any) => boolean);
+}
+
 function getDefaultModel(): DataModelRepository {
   return getWindow<{ W: { model: DataModelRepository } }>().W.model;
 }
 
-export function captureActions(cb: () => void, model?: DataModelRepository) {
+export function captureActions(cb: () => void, options?: CaptureActionsOptions) {
   const actions: any[] = [];
-  const methodSwapper = new PropertySwapper((model ?? getDefaultModel()).actionManager, 'add');
+  const methodSwapper = new PropertySwapper((options?.model ?? getDefaultModel()).actionManager, 'add');
   methodSwapper.swap((action: any) => {
     actions.push(action);
+    if (options?.actionResult === undefined) return false;
+    if (typeof options.actionResult === 'boolean') return options.actionResult;
+    return options.actionResult(action);
   });
 
   try {
@@ -35,11 +44,14 @@ export function captureActions(cb: () => void, model?: DataModelRepository) {
   return actions;
 }
 
-export async function captureAsyncActions(cb: () => Promise<void>, model?: DataModelRepository) {
+export async function captureAsyncActions(cb: () => Promise<void>, options?: CaptureActionsOptions) {
   const actions: any[] = [];
-  const methodSwapper = new PropertySwapper((model ?? getDefaultModel()).actionManager, 'add');
+  const methodSwapper = new PropertySwapper((options?.model ?? getDefaultModel()).actionManager, 'add');
   methodSwapper.swap((action: any) => {
     actions.push(action);
+    if (options?.actionResult === undefined) return false;
+    if (typeof options.actionResult === 'boolean') return options.actionResult;
+    return options.actionResult(action);
   });
 
   try {
