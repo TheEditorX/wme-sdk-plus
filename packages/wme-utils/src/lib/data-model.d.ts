@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Collection, Model } from '@types/backbone';
+import type { Collection, Model } from 'backbone';
 
 type EntitiesType =
   | 'bigJunctions'
@@ -41,7 +41,7 @@ type EntitiesType =
  * satisfies this contract — including both the live `W.model` and dummy instances
  * created via `W.model.constructor`.
  */
-export interface DataModel {
+export type DataModel = {
   actionManager: ActionManager;
 
   repos: Record<EntitiesType, Collection>;

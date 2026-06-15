@@ -1,5 +1,5 @@
 import { getWindow } from '@wme-enhanced-sdk/utils';
-import { DataModel } from './data-model.js';
+import type { DataModel } from './data-model.js';
 
 function getLiveDataModel() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
