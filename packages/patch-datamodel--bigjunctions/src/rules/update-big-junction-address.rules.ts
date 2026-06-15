@@ -2,7 +2,7 @@
 import { DefinePropertyRule, SdkPatcherRule, SdkPatcherRuleOperationArgs } from '@wme-enhanced-sdk/sdk-patcher';
 import { getWindow } from '@wme-enhanced-sdk/utils';
 import { getBigJunction } from '../utils/get-big-junction.js';
-import { scrapeUpdateFeatureAddressActionConstructor } from '../utils/scrape-update-feature-address-action.js';
+import { scrapeUpdateFeatureAddressActionConstructor } from '@wme-enhanced-sdk/wme-utils';
 
 interface UpdateBigJunctionAddressArgs {
   bigJunctionId: number;
