@@ -1,7 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { WmeSDK } from 'wme-sdk-typings';
-import { getWindow } from '@wme-enhanced-sdk/utils';
-import { captureActions, resolveEntityPrototype, runWithModel } from '@wme-enhanced-sdk/wme-utils';
+import { captureActions } from './capture-actions.js';
+import { resolveEntityPrototype } from './resolve-entity-prototype.js';
+import { runWithModel } from './run-with-model.js';
+import { createEmptyDataModel } from './create-empty-data-model.js';
 
 let cachedConstructor: any | null = null;
 let cachedPromise: Promise<any> | null = null;
@@ -11,7 +13,7 @@ let cachedPromise: Promise<any> | null = null;
  *
  * On the first call it:
  *   1. Resolves the WME entity constructors for country, state, city, street, and venue.
- *   2. Constructs a fresh, isolated data model via `W.model.constructor`.
+ *   2. Constructs a fresh, isolated data model via `createEmptyDataModel`.
  *   3. Creates minimal dummy entity instances, links them together, and merges them
  *      into the dummy model.
  *   4. Runs {@linkcode sdk.Venues.updateAddress} inside a {@linkcode runWithModel} /
@@ -36,9 +38,7 @@ export async function scrapeUpdateFeatureAddressActionConstructor(sdk: WmeSDK): 
       const Street = await resolveEntityPrototype('streets', { id: -1, name: null });
       const Venue = await resolveEntityPrototype('venues', { id: '-1' });
 
-      // Create a fresh, isolated data model that won't affect the live editor state
-      const win = getWindow<{ W: any }>();
-      const dummyModel = new (win.W.model.constructor)();
+      const dummyModel = createEmptyDataModel();
 
       // Build minimal entity instances with linked IDs
       const country = new Country({ id: -1 });
