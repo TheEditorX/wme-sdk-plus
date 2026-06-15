@@ -34,6 +34,23 @@ export class MethodInterceptor<
     this._interceptionFunction = interceptionFunction;
   }
 
+  static mockReturnValueOnce<Target extends object, FnKey extends KeysOfFunctions<Target>>(
+    targetObject: Target,
+    functionName: FnKey,
+    returnValue: ReturnType<FunctionOfTarget<Target, FnKey>>,
+  ) {
+    const interceptor = new MethodInterceptor(
+      targetObject,
+      functionName,
+      () => {
+        interceptor.restore();
+        return returnValue;
+      }
+    );
+    interceptor.enable();
+    return interceptor;
+  }
+
   get enabled() {
     return this._fnSwapper.isSwapped && this._enabled;
   }
