@@ -35,6 +35,9 @@ export default [
         houseNumber: undefined,
         stateID: cityEntity.getStateID(),
         streetName: '',
+      }, {
+        updateStreet: false,
+        shouldGetCityFromDataModel: true,
       });
 
       win.W.model.actionManager.add(action);
