@@ -24,7 +24,7 @@ export default [
         throw new Error('Unexpected state: Added object does not exist');
 
       if (addedObject.type !== 'bigJunction')
-        throw new Error('Unexpected state: Expected the added object to be a BigJunction instead of ' + addedAction.type);
+        throw new Error('Unexpected state: Expected the added object to be a BigJunction instead of ' + addedObject.type);
 
       return {
         [BIG_JUNCTION_DM]: addedObject.constructor,
