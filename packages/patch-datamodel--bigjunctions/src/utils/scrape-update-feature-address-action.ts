@@ -65,7 +65,7 @@ export async function scrapeUpdateFeatureAddressActionConstructor(sdk: WmeSDK): 
       const [capturedAction] = runWithModel(dummyModel, () =>
         captureActions(() => {
           sdk.DataModel.Venues.updateAddress({ venueId: '-1', streetId: -1 });
-        }, dummyModel),
+        }, { model: dummyModel, actionResult: true }),
       );
 
       if (!capturedAction || capturedAction.actionName !== 'UPDATE_FEATURE_ADDRESS') {
