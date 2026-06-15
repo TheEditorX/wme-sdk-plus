@@ -1,4 +1,5 @@
 import { getWindow } from '@wme-enhanced-sdk/utils';
+import { DataModel } from './data-model.js';
 
 function getLiveDataModel() {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -9,7 +10,7 @@ function getLiveDataModel() {
   return win.W.model;
 }
 
-export function createEmptyDataModel() {
+export function createEmptyDataModel(): DataModel {
   const liveModel = getLiveDataModel();
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const DataModelConstructor = liveModel.constructor as any;
