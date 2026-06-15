@@ -6,7 +6,7 @@ import { scrapeUpdateFeatureAddressActionConstructor } from '../utils/scrape-upd
 
 interface UpdateBigJunctionAddressArgs {
   bigJunctionId: number;
-  streetId: number;
+  cityId: number;
 }
 
 export default [
@@ -19,27 +19,22 @@ export default [
 
       const win = getWindow<{ W: any }>();
 
-      const streetEntity = win.W.model.streets.getObjectById(args.streetId);
-      if (!streetEntity) {
-        throw new sdk.Errors.DataModelNotFoundError('street', args.streetId);
-      }
-
-      const cityEntity = win.W.model.cities.getObjectById(streetEntity.getAttribute('cityID'));
+      const cityEntity = win.W.model.cities.getObjectById(args.cityId);
       if (!cityEntity) {
-        throw new sdk.Errors.DataModelNotFoundError('city', streetEntity.getAttribute('cityID'));
+        throw new sdk.Errors.DataModelNotFoundError('city', args.cityId);
       }
 
       const UpdateFeatureAddress = await scrapeUpdateFeatureAddressActionConstructor(sdk);
 
       const action = new UpdateFeatureAddress(bigJunction, {
-        cityID: streetEntity.getAttribute('cityID'),
+        cityID: args.cityId,
         cityName: cityEntity.getName() ?? '',
         countryID: cityEntity.getCountryID(),
         emptyCity: cityEntity.isEmpty(),
-        emptyStreet: !streetEntity.getName(),
+        emptyStreet: true,
         houseNumber: undefined,
         stateID: cityEntity.getStateID(),
-        streetName: streetEntity.getName() ?? '',
+        streetName: '',
       });
 
       win.W.model.actionManager.add(action);
