@@ -1,11 +1,10 @@
 import { DefinePropertyRule, SdkPatcherRule } from '@wme-enhanced-sdk/sdk-patcher';
-import { captureAsyncActions, drawFeature } from '@wme-enhanced-sdk/wme-utils';
+import { captureAsyncActions, drawFeature, pushUpdateObjectAction } from '@wme-enhanced-sdk/wme-utils';
 import { polygon } from '@turf/helpers';
 import { AddSchoolZoneArgs } from './lib/args/add-school-zone-args.js';
 import { createPermanentHazard } from './lib/create-permanent-hazard.js';
 import { UpdateSchoolZoneArgs } from './lib/args/update-school-zone-args.js';
 import { getPermanentHazard } from './lib/get-permanent-hazard.js';
-import { pushUpdateObjectAction } from './lib/update-object-action.js';
 import { omitUndefined } from './lib/omit-undefined.js';
 import { WmeSDK } from 'wme-sdk-typings';
 import { GetSchoolZoneByIdArgs } from './lib/args/get-school-zone-by-id-args.js';
