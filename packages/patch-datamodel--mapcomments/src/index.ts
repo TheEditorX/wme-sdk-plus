@@ -1,12 +1,11 @@
 import { DefinePropertyRule, SdkPatcherRule } from '@wme-enhanced-sdk/sdk-patcher';
-import { resolveEntityPrototype } from '@wme-enhanced-sdk/wme-utils';
+import { resolveEntityPrototype, pushUpdateObjectAction } from '@wme-enhanced-sdk/wme-utils';
 import { point } from '@turf/helpers';
 import { AddMapCommentArgs } from './lib/add-map-comments-args.js';
 import { pushCreateObjectAction } from './lib/create-object-action.js';
 import { formatEndDate } from './lib/format-end-date.js';
 import { UpdateMapCommentsArgs } from './lib/update-map-comments-args.js';
 import { getMapComment } from './lib/get-map-comment.js';
-import { pushUpdateObjectAction } from './lib/update-object-action.js';
 import { WmeSDK } from 'wme-sdk-typings';
 import { doActions } from '@wme-enhanced-sdk/patch-editing--transactions';
 

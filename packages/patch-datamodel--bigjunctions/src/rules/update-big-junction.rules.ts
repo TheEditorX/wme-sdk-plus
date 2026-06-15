@@ -1,6 +1,6 @@
 import { DefinePropertyRule, SdkPatcherRule, SdkPatcherRuleOperationArgs } from '@wme-enhanced-sdk/sdk-patcher';
+import { pushUpdateObjectAction } from '@wme-enhanced-sdk/wme-utils';
 import { getBigJunction } from '../utils/get-big-junction.js';
-import { pushUpdateObjectAction } from '../utils/update-object-action.js';
 
 interface UpdateBigJunctionArgs {
   bigJunctionId: number;
