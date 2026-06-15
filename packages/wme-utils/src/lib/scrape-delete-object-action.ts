@@ -21,12 +21,17 @@ export function scrapeDeleteObjectAction(sdk: WmeSDK, object: Model, actionName:
 
   dataModel.repos['venues'].objects['__object'] = object;
   const [action] = runWithModel(dataModel, () => {
-    MethodInterceptor.mockReturnValueOnce(object, 'isNew', true);
-    MethodInterceptor.mockReturnValueOnce(getEditingMediator(), 'isEditingAllowed', true);
+    const isNewInterceptor = MethodInterceptor.mockReturnValueOnce(object, 'isNew', true);
+    const isEditingAllowedInterceptor = MethodInterceptor.mockReturnValueOnce(getEditingMediator(), 'isEditingAllowed', true);
 
-    return captureActions(() => {
-      sdk.DataModel.Venues.deleteVenue({ venueId: '__object' });
-    }, { model: dataModel });
+    try {
+      return captureActions(() => {
+        sdk.DataModel.Venues.deleteVenue({ venueId: '__object' });
+      }, { model: dataModel });
+    } finally {
+      isNewInterceptor.restore();
+      isEditingAllowedInterceptor.restore();
+    }
   });
   delete dataModel.repos['venues'].objects['__object'];
   if (action.actionName !== actionName) {
