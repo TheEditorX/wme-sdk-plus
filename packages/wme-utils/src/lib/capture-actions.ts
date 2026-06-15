@@ -2,27 +2,16 @@ import {
   PropertySwapper,
 } from '@wme-enhanced-sdk/method-interceptor';
 import { getWindow } from '@wme-enhanced-sdk/utils';
-
-/**
- * Minimal interface for a WME data model repository instance, sufficient for
- * action capture operations. Any object exposing an `actionManager.add` method
- * satisfies this contract — including both the live `W.model` and dummy instances
- * created via `W.model.constructor`.
- */
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-export interface DataModelRepository {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  actionManager: { add: (...args: any[]) => any };
-}
+import { DataModel } from './data-model.js';
 
 export interface CaptureActionsOptions {
-  model?: DataModelRepository;
+  model?: DataModel;
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   actionResult?: boolean | ((action: any) => boolean);
 }
 
-function getDefaultModel(): DataModelRepository {
-  return getWindow<{ W: { model: DataModelRepository } }>().W.model;
+function getDefaultModel(): DataModel {
+  return getWindow<{ W: { model: DataModel } }>().W.model;
 }
 
 export function captureActions(cb: () => void, options?: CaptureActionsOptions) {
