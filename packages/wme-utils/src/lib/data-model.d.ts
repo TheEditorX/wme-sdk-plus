@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-import type { Collection, Model } from 'backbone';
+import type { Model } from 'backbone';
 
 type EntitiesType =
   | 'bigJunctions'
@@ -44,10 +44,10 @@ type EntitiesType =
 export type DataModel = {
   actionManager: ActionManager;
 
-  repos: Record<EntitiesType, Collection>;
-  [repoName in EntitiesType]: Collection;
+  repos: Record<EntitiesType, any>;
+  [repoName in EntitiesType]: any;
   isRepository(name: string): name is EntitiesType;
-  getRepositories(): Record<EntitiesType, Collection>;
+  getRepositories(): Record<EntitiesType, any>;
 
   clone(): DataModel;
   mergeObjects(
