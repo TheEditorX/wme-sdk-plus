@@ -7,7 +7,6 @@ import { scrapeUpdateFeatureAddressActionConstructor } from '../utils/scrape-upd
 interface UpdateBigJunctionAddressArgs {
   bigJunctionId: number;
   streetId: number;
-  houseNumber?: string | null;
 }
 
 export default [
@@ -38,7 +37,7 @@ export default [
         countryID: cityEntity.getCountryID(),
         emptyCity: cityEntity.isEmpty(),
         emptyStreet: !streetEntity.getName(),
-        houseNumber: args.houseNumber ?? null,
+        houseNumber: undefined,
         stateID: cityEntity.getStateID(),
         streetName: streetEntity.getName() ?? '',
       });
