@@ -22,6 +22,9 @@
       "path": "../patch-events"
     },
     {
+      "path": "../patch-editing--custom-actions"
+    },
+    {
       "path": "../patch-datamodel--bigjunctions"
     },
     {

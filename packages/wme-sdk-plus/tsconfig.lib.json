@@ -18,6 +18,9 @@
       "path": "../patch-datamodel--mapcomments/tsconfig.lib.json"
     },
     {
+      "path": "../patch-editing--custom-actions/tsconfig.lib.json"
+    },
+    {
       "path": "../patch-editing--transactions/tsconfig.lib.json"
     },
     {
