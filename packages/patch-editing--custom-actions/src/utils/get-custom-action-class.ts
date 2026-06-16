@@ -10,8 +10,12 @@ let cachedCustomActionClass: CustomSdkActionConstructor | null = null;
 
 function getActionClass(): typeof Action | null {
   try {
-    const window = getWindow<{ require(module: 'Waze/Action/MultiAction'): typeof Action }>();
-    const MultiAction: typeof Action = window.require('Waze/Action/MultiAction');
+    const window = getWindow<{
+      require(module: 'Waze/Action/MultiAction'): typeof Action;
+    }>();
+    const MultiAction: typeof Action = window.require(
+      'Waze/Action/MultiAction'
+    );
     const CompositeAction: typeof Action = Object.getPrototypeOf(MultiAction);
     const ActionClass: typeof Action = Object.getPrototypeOf(CompositeAction);
     return ActionClass;
@@ -22,7 +26,7 @@ function getActionClass(): typeof Action | null {
 
 function createCustomActionClass(): CustomSdkActionConstructor {
   const ActionClass = getActionClass();
-  if (!ActionClass) 
+  if (!ActionClass)
     throw new Error('Failed to resolve Action class from Waze SDK');
 
   const CustomSdkAction = class CustomSdkAction extends (ActionClass as any) {
@@ -67,12 +71,15 @@ function createCustomActionClass(): CustomSdkActionConstructor {
       if (this._resolvedObjects) return this._resolvedObjects;
       const window = getWindow<{ W: any }>();
       const W = window.W;
-      this._resolvedObjects = this._payload.affectedObjects
-        .map((item) => {
+      this._resolvedObjects = this._payload.affectedObjects.reduce(
+        (acc: unknown[], item) => {
           const repo = W.model.getRepository(item.objectType);
-          return repo?.getObjectById(item.objectId);
-        })
-        .filter(Boolean);
+          const obj = repo?.getObjectById(item.objectId);
+          if (obj) acc.push(obj);
+          return acc;
+        },
+        []
+      );
       return this._resolvedObjects;
     }
 
