@@ -1,3 +1,5 @@
+import type { WmeSDK } from 'wme-sdk-typings';
+import { getWindow } from '@wme-enhanced-sdk/utils';
 import { createEventDefinition } from '../../lib/index.js';
 
 const enum SidebarTabPanes {
@@ -41,60 +43,42 @@ function isSidebarTabPane(node: Node): node is HTMLElement & { id: keyof typeof 
   );
 }
 
+// Helper types to infer handler type for a specific event name from the SDK's `on` method
+type OnArgs = Parameters<WmeSDK['Events']['on']>[0];
+type ExtractEventPayload<T> = T extends ((payload: infer U) => Promise<void> | void) ? U : never;
+type AllEventPayloads = ExtractEventPayload<OnArgs['eventHandler']>;
+type SidebarTabOpenedPayload = Extract<AllEventPayloads, { domId: unknown, tabName: unknown }>;
+
 export const sidebarTabRenderedEvent = createEventDefinition(
   'wme-sidebar-tab-opened',
-  ({ trigger }) => {
-    const triggerForSidebarTab = (tabElement: HTMLElement & { id: keyof typeof SIDEBAR_TAB_PANES_TO_TYPES }) => {
-      const tabType = SIDEBAR_TAB_PANES_TO_TYPES[tabElement.id];
-      if (!tabType) return;
+  ({ trigger, eventBus }) => {
+    const eventHandler = ({ domId, tabName }: SidebarTabOpenedPayload) => {
+      const window = getWindow();
+      const tabElement = window.document.getElementById(domId);
       trigger({
-        tabType: SIDEBAR_TAB_PANES_TO_SCRIPT_TYPES[tabType],
-        tabElement,
+        tabName,
+        domId,
+        tabType: tabElement && isSidebarTabPane(tabElement)
+                    ? SIDEBAR_TAB_PANES_TO_SCRIPT_TYPES[SIDEBAR_TAB_PANES_TO_TYPES[tabElement.id]]
+                    : undefined,
+        tabElement: tabElement && isSidebarTabPane(tabElement) ? tabElement : undefined,
       });
-    }
-
-    const mutationObserver = new MutationObserver((mutations, observer) => {
-      for (const mutation of mutations) {
-        switch (mutation.type) {
-          case 'childList':
-            mutation.addedNodes.forEach((node) => {
-              if (!isSidebarTabPane(node)) return;
-              triggerForSidebarTab(node);
-              observer.observe(node, {
-                attributes: true,
-              });
-            });
-            break;
-          case 'attributes': {
-            if (mutation.attributeName !== 'id') break;
-            if (!isSidebarTabPane(mutation.target)) break;
-            triggerForSidebarTab(mutation.target);
-            break;
-          }
-        }
-      }
-    });
-
-    const tabContentEl = document.getElementById('sidebarContent')?.querySelector('.tab-content');
-    if (tabContentEl) {
-      mutationObserver.observe(
-        tabContentEl,
-        {
-          childList: true,
-        },
-      );
-      // observe also all rendered tabs
-      const allTabPanes = Array.from(tabContentEl.getElementsByClassName('sidebar-tab-pane'));
-      for (const tabPane of allTabPanes) {
-        if (!isSidebarTabPane(tabPane)) continue;
-        mutationObserver.observe(tabPane, {
-          attributes: true,
-        });
-      }
-    }
-
-    return () => {
-      mutationObserver.disconnect();
     };
+
+    // this is essential to subscribe on the event bus directly instead of via SDK.Events.on,
+    // because the latter is patched by us to support this "custom" event,
+    // and the migration is dependant on an event with the same name being triggered before the patch is applied, so we can't rely on that
+    eventBus.on('wme-sidebar-tab-opened', eventHandler);
+    
+    return () => {
+      eventBus.off('wme-sidebar-tab-opened', eventHandler);
+    };
+  },
+  {
+    onSubscribed() {
+      console.warn(
+        '[WME SDK+]: Properties for this event deriving from SDK+ (tabType, tabElement) are deprecated and will be removed in a future version. Please use the native "wme-sidebar-tab-opened" event properties instead.'
+      );
+    },
   }
 )
