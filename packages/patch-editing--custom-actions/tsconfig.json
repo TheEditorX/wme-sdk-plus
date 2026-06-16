@@ -10,9 +10,6 @@
       "path": "../sdk-patcher"
     },
     {
-      "path": "../method-interceptor"
-    },
-    {
       "path": "./tsconfig.lib.json"
     },
     {

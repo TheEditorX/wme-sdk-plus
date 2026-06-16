@@ -22,6 +22,9 @@
       "path": "./packages/patch-editing--transactions"
     },
     {
+      "path": "./packages/patch-editing--custom-actions"
+    },
+    {
       "path": "./packages/patch-datamodel--mapcomments"
     },
     {
