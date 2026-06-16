@@ -11,8 +11,8 @@ let cachedCustomActionClass: CustomSdkActionConstructor | null = null;
 function getActionClass(): typeof Action | null {
   try {
     const window = getWindow<{ require(module: 'Waze/Action/MultiAction'): typeof Action }>();
-    const MutliAction: typeof Action = window.require('Waze/Action/MultiAction');
-    const CompositeAction: typeof Action = Object.getPrototypeOf(MutliAction);
+    const MultiAction: typeof Action = window.require('Waze/Action/MultiAction');
+    const CompositeAction: typeof Action = Object.getPrototypeOf(MultiAction);
     const ActionClass: typeof Action = Object.getPrototypeOf(CompositeAction);
     return ActionClass;
   } catch {
