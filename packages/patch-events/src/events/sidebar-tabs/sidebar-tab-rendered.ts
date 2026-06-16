@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import type { WmeSDK } from 'wme-sdk-typings';
 import { getWindow } from '@wme-enhanced-sdk/utils';
 import { createEventDefinition } from '../../lib/index.js';
@@ -52,17 +53,24 @@ type SidebarTabOpenedPayload = Extract<AllEventPayloads, { domId: unknown, tabNa
 export const sidebarTabRenderedEvent = createEventDefinition(
   'wme-sidebar-tab-opened',
   ({ trigger, eventBus }) => {
-    const eventHandler = ({ domId, tabName }: SidebarTabOpenedPayload) => {
+    const eventHandler = (payload: SidebarTabOpenedPayload) => {
+      if (Reflect.getMetadata('wme-sdk:enriched', payload)) return;
+
       const window = getWindow();
-      const tabElement = window.document.getElementById(domId);
-      trigger({
-        tabName,
-        domId,
+      const tabElement = window.document.getElementById(payload.domId as string);
+
+      const enrichedPayload = {
+        tabName: payload.tabName,
+        domId: payload.domId,
         tabType: tabElement && isSidebarTabPane(tabElement)
                     ? SIDEBAR_TAB_PANES_TO_SCRIPT_TYPES[SIDEBAR_TAB_PANES_TO_TYPES[tabElement.id]]
                     : undefined,
         tabElement: tabElement && isSidebarTabPane(tabElement) ? tabElement : undefined,
-      });
+      };
+
+      Reflect.defineMetadata('wme-sdk:enriched', true, enrichedPayload);
+
+      trigger(enrichedPayload);
     };
 
     // this is essential to subscribe on the event bus directly instead of via SDK.Events.on,
