@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "@wme-enhanced-sdk/method-interceptor": "^0.0.1",
-    "@wme-enhanced-sdk/sdk-patcher": "^0.0.1"
+    "@wme-enhanced-sdk/sdk-patcher": "^0.0.1",
+    "@wme-enhanced-sdk/utils": "^0.0.1"
   }
 }
