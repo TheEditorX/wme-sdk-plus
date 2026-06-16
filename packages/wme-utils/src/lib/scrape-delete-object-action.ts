@@ -20,23 +20,26 @@ export function scrapeDeleteObjectAction(sdk: WmeSDK, object: Model, actionName:
   if (!dataModel) throw new Error('Failed to create empty data model');
 
   dataModel.repos['venues'].objects['__object'] = object;
-  const [action] = runWithModel(dataModel, () => {
-    const isNewInterceptor = MethodInterceptor.mockReturnValueOnce(object, 'isNew', true);
-    const isEditingAllowedInterceptor = MethodInterceptor.mockReturnValueOnce(getEditingMediator(), 'isEditingAllowed', true);
+  try {
+    const [action] = runWithModel(dataModel, () => {
+      const isNewInterceptor = MethodInterceptor.mockReturnValueOnce(object, 'isNew', true);
+      const isEditingAllowedInterceptor = MethodInterceptor.mockReturnValueOnce(getEditingMediator(), 'isEditingAllowed', true);
 
-    try {
-      return captureActions(() => {
-        sdk.DataModel.Venues.deleteVenue({ venueId: '__object' });
-      }, { model: dataModel });
-    } finally {
-      isNewInterceptor.restore();
-      isEditingAllowedInterceptor.restore();
+      try {
+        return captureActions(() => {
+          sdk.DataModel.Venues.deleteVenue({ venueId: '__object' });
+        }, { model: dataModel });
+      } finally {
+        isNewInterceptor.restore();
+        isEditingAllowedInterceptor.restore();
+      }
+    });
+    if (action.actionName !== actionName) {
+      throw new Error(`Unexpected action discovered when tried to resolve ${actionName} action: ${action.actionName}`);
     }
-  });
-  delete dataModel.repos['venues'].objects['__object'];
-  if (action.actionName !== actionName) {
-    throw new Error(`Unexpected action discovered when tried to resolve ${actionName} action: ${action.actionName}`);
+    
+    return action;
+  } finally {
+    delete dataModel.repos['venues'].objects['__object'];
   }
-
-  return action.constructor;
 }
