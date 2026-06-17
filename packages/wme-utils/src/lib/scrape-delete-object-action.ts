@@ -38,7 +38,7 @@ export function scrapeDeleteObjectAction(sdk: WmeSDK, object: Model, actionName:
       throw new Error(`Unexpected action discovered when tried to resolve ${actionName} action: ${action.actionName}`);
     }
     
-    return action;
+    return action.constructor;
   } finally {
     delete dataModel.repos['venues'].objects['__object'];
   }
