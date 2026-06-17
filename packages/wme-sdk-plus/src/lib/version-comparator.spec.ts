@@ -50,4 +50,24 @@ describe('compareVersions', () => {
     expect(compareVersions({ major: 1 }, null as any)).toBe(1);
     expect(compareVersions({ major: 1 }, undefined as any)).toBe(1);
   });
+
+  it('should correctly compare zero vs non-zero in major version', () => {
+    expect(compareVersions({ major: 0, minor: 1, patch: 0 }, { major: 1, minor: 0, patch: 0 })).toBeLessThan(0);
+    expect(compareVersions({ major: 1, minor: 0, patch: 0 }, { major: 0, minor: 1, patch: 0 })).toBeGreaterThan(0);
+  });
+
+  it('should correctly compare zero vs non-zero in minor version', () => {
+    expect(compareVersions({ major: 1, minor: 0, patch: 5 }, { major: 1, minor: 1, patch: 0 })).toBeLessThan(0);
+    expect(compareVersions({ major: 1, minor: 1, patch: 0 }, { major: 1, minor: 0, patch: 5 })).toBeGreaterThan(0);
+  });
+
+  it('should correctly compare zero vs non-zero in patch version', () => {
+    expect(compareVersions({ major: 1, minor: 2, patch: 0 }, { major: 1, minor: 2, patch: 1 })).toBeLessThan(0);
+    expect(compareVersions({ major: 1, minor: 2, patch: 1 }, { major: 1, minor: 2, patch: 0 })).toBeGreaterThan(0);
+  });
+
+  it('should return 0 when both versions have zero values at the same level', () => {
+    expect(compareVersions({ major: 0, minor: 0, patch: 0 }, { major: 0, minor: 0, patch: 0 })).toBe(0);
+    expect(compareVersions({ major: 1, minor: 0, patch: 0 }, { major: 1, minor: 0, patch: 0 })).toBe(0);
+  });
 });
