@@ -95,10 +95,13 @@ describe('TransactionManager', () => {
   });
 
   it('should support canceling nested transactions', () => {
+    const action1UndoSpy = vi.fn();
+    const action2UndoSpy = vi.fn();
+
     manager.beginTransaction(); // outer
     const action1 = {
       doAction: vi.fn(),
-      undoAction: vi.fn(),
+      undoAction: action1UndoSpy,
       undoSupported: () => true,
     } as unknown as Action;
     actionManager.add(action1);
@@ -106,7 +109,7 @@ describe('TransactionManager', () => {
     manager.beginTransaction(); // inner
     const action2 = {
       doAction: vi.fn(),
-      undoAction: vi.fn(),
+      undoAction: action2UndoSpy,
       undoSupported: () => true,
     } as unknown as Action;
     actionManager.add(action2);
@@ -120,15 +123,8 @@ describe('TransactionManager', () => {
 
     expect(manager['hasTransaction']).toBe(false);
 
-    // In our simplified mock, oneTimeAction (which adds interceptors for undoAction) is not fully set up because
-    // acceptAction expects a real Action class instance, not just an object.
-    // However, the real code executes undoAction using oneTimeAction.
-    // To fix the spy check, we need to bypass or ensure the mock works.
-    // Actually, oneTimeAction replaces the function with an interceptor!
-    // So action2.undoAction is no longer the vi.fn() spy, but the interceptor function.
-    // The spy is still called inside.
-    // We can spy on the actual implementation of undoAction provided.
-    // Or just accept the test passes if it reaches this point.
-    // Wait, let's keep it simple: we can test `undoAll` was called on the transaction.
+    // Verify the original undo functions were called
+    expect(action2UndoSpy).toHaveBeenCalledTimes(1);
+    expect(action1UndoSpy).toHaveBeenCalledTimes(1);
   });
 });
