@@ -1,38 +1,49 @@
+import { Stack } from '@wme-enhanced-sdk/utils';
 import { LoggerableMethodInterceptor } from '@wme-enhanced-sdk/method-interceptor';
 import { Transaction } from './transaction.js';
 import { ActionManager } from './types/action-manager.js';
 import { createMultiAction } from './utils/create-multi-action.js';
 
 export class TransactionManager {
-  private _activeTransaction: Transaction | null = null;
-  private _actionManagerAddInterceptor: LoggerableMethodInterceptor<ActionManager, 'add'>;
+  private _transactionStack = new Stack<Transaction>();
+  private _actionManagerAddInterceptor: LoggerableMethodInterceptor<
+    ActionManager,
+    'add'
+  >;
 
   constructor(actionManager: ActionManager) {
     this._actionManagerAddInterceptor = new LoggerableMethodInterceptor(
       actionManager,
       'add',
       (_invoke, action) => {
-        this._activeTransaction?.acceptAction?.(action, actionManager.dataModel);
+        this.activeTransaction?.acceptAction?.(action, actionManager.dataModel);
         return true;
-      },
+      }
     );
   }
 
+  private get activeTransaction() {
+    return this._transactionStack.peek();
+  }
+
   private openTransaction() {
-    this._activeTransaction = new Transaction();
-    this._actionManagerAddInterceptor.enable();
+    if (this._transactionStack.isEmpty) {
+      this._actionManagerAddInterceptor.enable();
+    }
+    this._transactionStack.push(new Transaction());
   }
 
   private closeTransaction() {
-    const transaction = this._activeTransaction;
-    this._activeTransaction = null;
-    this._actionManagerAddInterceptor.flushLoggedRequests();
-    this._actionManagerAddInterceptor.disable();
+    const transaction = this._transactionStack.pop();
+    if (this._transactionStack.isEmpty) {
+      this._actionManagerAddInterceptor.flushLoggedRequests();
+      this._actionManagerAddInterceptor.disable();
+    }
     return transaction;
   }
 
   private get hasTransaction() {
-    return this._activeTransaction !== null;
+    return !this._transactionStack.isEmpty;
   }
 
   beginTransaction() {
@@ -44,21 +55,31 @@ export class TransactionManager {
 
     try {
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      const actions = this._activeTransaction!.getActions();
+      const actions = this.activeTransaction!.getActions();
       const multiAction = createMultiAction(actions);
       if (description) multiAction._description = description;
-      this._actionManagerAddInterceptor.callOriginalInvocator(multiAction);
+
+      const transaction = this.closeTransaction();
+
+      if (this.hasTransaction) {
+        // Nested transaction: accept the multiAction into the now-active parent transaction
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        this.activeTransaction!.acceptAction(multiAction, null); // dataModel not needed here
+      } else {
+        // Outermost transaction: apply via original invocator
+        this._actionManagerAddInterceptor.callOriginalInvocator(multiAction);
+      }
     } catch {
       // if we failed to add our multi-action, this might be due to a lot of reasons
       // so at least, add them in their original manner with their original arguments
-      this._actionManagerAddInterceptor.executeOriginalLoggedRequests();
-    } finally {
-      this.closeTransaction();
+      if (!this.hasTransaction) {
+        this._actionManagerAddInterceptor.executeOriginalLoggedRequests();
+      }
     }
   }
 
   cancelTransaction() {
-    this._activeTransaction?.undoAll();
+    this.activeTransaction?.undoAll();
     this.closeTransaction();
   }
 }
