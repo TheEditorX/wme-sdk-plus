@@ -5,6 +5,8 @@ describe('executeMiddlewareChain', () => {
   let registry: MiddlewareRegistry;
 
   beforeEach(() => {
+    // The WmeSDK argument is only used to pass to middleware context; a null stub is sufficient
+    // for unit tests that do not exercise SDK-specific middleware behaviour.
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     registry = new MiddlewareRegistry(null as any);
   });

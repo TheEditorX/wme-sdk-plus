@@ -86,6 +86,8 @@ describe('RepositoryInterceptor', () => {
   let collection: ReturnType<typeof createMockCollection>;
 
   beforeEach(() => {
+    // The WmeSDK argument is only used to pass to middleware context; a null stub is
+    // sufficient for unit tests that do not exercise SDK-specific middleware behaviour.
     registry = new MiddlewareRegistry(null as any);
     collection = createMockCollection();
   });

@@ -87,7 +87,9 @@ describe('MiddlewareActionRunner', () => {
     expect(finalAction).toReturnWith(valueToReplace + ' Again');
   });
 
-  test('Run with middleware not calling next', async () => {
+  // Behaviour change: not calling next() now prevents the chain (returns null) and emits a warning.
+  // Previously, the runner would auto-call next() and continue – this was confusing and dangerous.
+  test('Run with middleware not calling next prevents the chain and warns', async () => {
     const finalAction = vitest.fn(returnValue);
     const consoleWarnMock = vitest.spyOn(console, 'warn').mockImplementationOnce(() => undefined);
 
