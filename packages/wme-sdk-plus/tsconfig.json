@@ -25,6 +25,9 @@
       "path": "../patch-editing--custom-actions"
     },
     {
+      "path": "../patch-datamodel--interceptors"
+    },
+    {
       "path": "../patch-datamodel--bigjunctions"
     },
     {

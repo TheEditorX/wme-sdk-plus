@@ -18,9 +18,6 @@
       "path": "../patch-datamodel--mapcomments/tsconfig.lib.json"
     },
     {
-      "path": "../patch-editing--custom-actions/tsconfig.lib.json"
-    },
-    {
       "path": "../patch-editing--transactions/tsconfig.lib.json"
     },
     {
@@ -31,6 +28,12 @@
     },
     {
       "path": "../patch-events/tsconfig.lib.json"
+    },
+    {
+      "path": "../patch-editing--custom-actions/tsconfig.lib.json"
+    },
+    {
+      "path": "../patch-datamodel--interceptors/tsconfig.lib.json"
     },
     {
       "path": "../patch-datamodel--bigjunctions/tsconfig.lib.json"

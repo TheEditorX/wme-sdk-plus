@@ -112,6 +112,7 @@ export default [
           const mutatedContextData = await triggerMiddlewares(
             initialContextData
           );
+          if (!mutatedContextData) return;
           const closuresEqual = compareClosuresArrays(
             initialContextData.closures,
             mutatedContextData.closures

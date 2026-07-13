@@ -40,6 +40,7 @@ export default new DefineMiddlewareActionPointRule<AddCommentData>({
             updateRequestId: this.conversation.getID() as number,
             message: message as string,
           });
+          if (!data) return;
           return invoke(data.message, ...args);
         }
       );

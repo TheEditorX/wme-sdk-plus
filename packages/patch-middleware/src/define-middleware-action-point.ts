@@ -5,7 +5,7 @@ import { REGISTRY_ARTIFACT } from './consts.js';
 
 export interface DefineMiddlewareActionPointRuleOptions<D extends object> {
   actionPoint: string;
-  install: (triggerMiddlewares: (data: D) => Promise<D>, artifacts: Record<symbol | string, any>) => ((() => void) | void);
+  install: (triggerMiddlewares: (data: D) => Promise<D | null>, artifacts: Record<symbol | string, any>) => ((() => void) | void);
   registryArtifactName?: string | symbol;
 }
 export class DefineMiddlewareActionPointRule<D extends object> implements SdkPatcherRule {
@@ -29,10 +29,8 @@ export class DefineMiddlewareActionPointRule<D extends object> implements SdkPat
   private defineMiddleware(artifacts: Record<symbol | string, any>) {
     if (this.isMiddlewareDefined) return;
     this.uninstaller = this.options.install((data) => {
-      return new Promise((resolve) => {
-        if (!this.registry) return resolve(data);
-        this.registry.execute(this.options.actionPoint, data, resolve);
-      });
+      if (!this.registry) return Promise.resolve(data);
+      return this.registry.execute(this.options.actionPoint, data, (result) => result);
     }, artifacts) || null;
     this.isMiddlewareDefined = true;
   }
