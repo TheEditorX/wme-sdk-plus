@@ -12,31 +12,16 @@
   "include": ["src/**/*.ts"],
   "references": [
     {
-      "path": "../patch-datamodel--permanenthazards/tsconfig.lib.json"
-    },
-    {
-      "path": "../patch-datamodel--mapcomments/tsconfig.lib.json"
-    },
-    {
-      "path": "../patch-editing--transactions/tsconfig.lib.json"
-    },
-    {
-      "path": "../sdk-patcher/tsconfig.lib.json"
+      "path": "../method-interceptor/tsconfig.lib.json"
     },
     {
       "path": "../patch-middleware/tsconfig.lib.json"
     },
     {
-      "path": "../patch-events/tsconfig.lib.json"
+      "path": "../sdk-patcher/tsconfig.lib.json"
     },
     {
-      "path": "../patch-editing--custom-actions/tsconfig.lib.json"
-    },
-    {
-      "path": "../patch-datamodel--interceptors/tsconfig.lib.json"
-    },
-    {
-      "path": "../patch-datamodel--bigjunctions/tsconfig.lib.json"
+      "path": "../utils/tsconfig.lib.json"
     }
   ],
   "exclude": [

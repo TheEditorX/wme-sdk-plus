@@ -9,6 +9,25 @@ import updateRequests_addComment_middleware from './middlewares/updateRequests/a
 import closures_save_middleware from './middlewares/closures/save.js';
 import { MiddlewareHandler } from './lib/middleware-handler.js';
 
+// ── Public API ────────────────────────────────────────────────────────────────
+export { MiddlewareRegistry } from './lib/middleware-registry.js';
+export { REGISTRY_ARTIFACT } from './consts.js';
+export {
+  MiddlewareError,
+  MiddlewareFlowError,
+  MiddlewarePreventedError,
+} from './errors/index.js';
+export { DefineMiddlewareActionPointRule } from './define-middleware-action-point.js';
+export type {
+  DefineMiddlewareActionPointRuleOptions,
+} from './define-middleware-action-point.js';
+export type {
+  MiddlewareHandler,
+  NextFunction,
+  UnregisterFunction,
+} from './lib/middleware-handler.js';
+export { MiddlewareContext } from './lib/middleware-context.js';
+
 export default [
   {
     install: ({ sdk }) => {

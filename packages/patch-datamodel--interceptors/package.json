@@ -1,0 +1,27 @@
+{
+  "name": "@wme-enhanced-sdk/patch-datamodel--interceptors",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    "./package.json": "./package.json",
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    }
+  },
+  "dependencies": {
+    "@wme-enhanced-sdk/method-interceptor": "^0.0.1",
+    "@wme-enhanced-sdk/patch-middleware": "^0.0.1",
+    "@wme-enhanced-sdk/sdk-patcher": "^0.0.1",
+    "@wme-enhanced-sdk/utils": "^0.0.1",
+    "jsondiffpatch": "^0.7.6"
+  },
+  "devDependencies": {
+    "wme-sdk-typings": "https://web-assets.waze.com/wme_sdk_docs/production/latest/wme-sdk-typings.tgz"
+  }
+}

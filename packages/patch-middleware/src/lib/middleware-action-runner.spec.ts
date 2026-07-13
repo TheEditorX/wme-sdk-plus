@@ -87,13 +87,15 @@ describe('MiddlewareActionRunner', () => {
     expect(finalAction).toReturnWith(valueToReplace + ' Again');
   });
 
-  test('Run with middleware not calling next', async () => {
+  // Behaviour change: not calling next() now prevents the chain (returns null) and emits a warning.
+  // Previously, the runner would auto-call next() and continue – this was confusing and dangerous.
+  test('Run with middleware not calling next prevents the chain and warns', async () => {
     const finalAction = vitest.fn(returnValue);
     const consoleWarnMock = vitest.spyOn(console, 'warn').mockImplementationOnce(() => undefined);
 
     const initialData = { value: 'Hello World' };
 
-    await new MiddlewareActionRunner<typeof initialData, ReturnType<typeof returnValue>>(
+    const result = await new MiddlewareActionRunner<typeof initialData, ReturnType<typeof returnValue>>(
       'test',
       initialData,
       null!,
@@ -107,9 +109,57 @@ describe('MiddlewareActionRunner', () => {
       ],
     ).run(finalAction);
     
-    expect(finalAction).toBeCalled();
-    expect(finalAction).toReturnWith(initialData.value + ' from Middleware');
+    expect(result).toBeNull();
+    expect(finalAction).not.toBeCalled();
     expect(consoleWarnMock).toBeCalled();
+  });
+
+  test('Run with middleware returning null (explicit cancellation)', async () => {
+    const finalAction = vitest.fn(returnValue);
+    const consoleWarnMock = vitest.spyOn(console, 'warn');
+
+    const initialData = { value: 'Hello World' };
+
+    const result = await new MiddlewareActionRunner<typeof initialData, ReturnType<typeof returnValue>>(
+      'test',
+      initialData,
+      null!,
+      [
+        () => null,
+        (context, next) => {
+          context.data.value += ' from Middleware';
+          next();
+        },
+      ],
+    ).run(finalAction);
+
+    expect(result).toBeNull();
+    expect(finalAction).not.toBeCalled();
+    expect(consoleWarnMock).not.toBeCalled();
+  });
+
+  test('Run with middleware returning false (explicit cancellation)', async () => {
+    const finalAction = vitest.fn(returnValue);
+    const consoleWarnMock = vitest.spyOn(console, 'warn');
+
+    const initialData = { value: 'Hello World' };
+
+    const result = await new MiddlewareActionRunner<typeof initialData, ReturnType<typeof returnValue>>(
+      'test',
+      initialData,
+      null!,
+      [
+        () => false,
+        (context, next) => {
+          context.data.value += ' from Middleware';
+          next();
+        },
+      ],
+    ).run(finalAction);
+
+    expect(result).toBeNull();
+    expect(finalAction).not.toBeCalled();
+    expect(consoleWarnMock).not.toBeCalled();
   });
 
   test('Run with middleware next return value', async () => {

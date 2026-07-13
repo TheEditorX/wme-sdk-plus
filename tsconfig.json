@@ -44,6 +44,9 @@
     },
     {
       "path": "./packages/patch-events"
+    },
+    {
+      "path": "./packages/patch-datamodel--interceptors"
     }
   ]
 }

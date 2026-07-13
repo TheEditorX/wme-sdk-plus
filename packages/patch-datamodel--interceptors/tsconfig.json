@@ -1,0 +1,25 @@
+{
+  "extends": "../../tsconfig.base.json",
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "../method-interceptor"
+    },
+    {
+      "path": "../patch-middleware"
+    },
+    {
+      "path": "../sdk-patcher"
+    },
+    {
+      "path": "../utils"
+    },
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
+}

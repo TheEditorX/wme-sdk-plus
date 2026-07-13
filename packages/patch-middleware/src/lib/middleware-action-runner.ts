@@ -71,20 +71,24 @@ export class MiddlewareActionRunner<D extends object, R = any> {
       try {
         // Execute the current middleware handler
         // Using Promise.resolve to handle both sync and async handlers gracefully
-        await Promise.resolve(handler(
+        const handlerResult = await Promise.resolve(handler(
           context,
           next,
         ));
 
-        // Check if the next handler has been called
-        // If not - we should call it ourselves and warn the user about the neccesity of either calling the next handler,
-        // or throwing a prevention error
         if (!isNextCalled()) {
-          console.warn(
-            `Middleware handler "${handler.name || "anonymous"}" did not call next() and did not throw an error. This is not recommended and may cause unexpected behavior.\nEnsure to always call next() or throw an error to stop the middleware chain.`,
-          );
+          // Returning null or false is treated as an explicit, intentional cancellation.
+          if (handlerResult !== null && handlerResult !== false) {
+            // Implicit cancellation – the developer may have forgotten to call next().
+            console.warn(
+              `Middleware handler "${handler.name || "anonymous"}" did not call next(). ` +
+              `The middleware chain execution will be stopped. ` +
+              `To explicitly prevent execution, throw MiddlewarePreventedError, return null, or return false. ` +
+              `To continue the chain, always call next().`,
+            );
+          }
 
-          return await next();
+          return null;
         }
 
         return await lastNextResult(); // Ensure we're awaiting for the next handler to finish

@@ -73,7 +73,7 @@ export class MiddlewareRegistry extends EventTarget {
     actionPoint: string,
     initialContextData: D,
     finalAction: (processedData: D) => R,
-  ) {
+  ): Promise<R | null> {
     const handlers = this.middleware.get(actionPoint) || [];
 
     const runner = new MiddlewareActionRunner<D, R>(
@@ -82,7 +82,7 @@ export class MiddlewareRegistry extends EventTarget {
       this.wmeSdk,
       handlers.map((registration) => registration.handler),
     );
-    await runner.run(finalAction);
+    return await runner.run(finalAction);
   }
 
   hasListeners(actionPoint: string): boolean {
